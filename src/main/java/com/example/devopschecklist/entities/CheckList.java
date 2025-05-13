@@ -1,0 +1,92 @@
+package com.example.devopschecklist.entities;
+
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+@Entity
+public class CheckList {
+    @Id
+    @GeneratedValue
+    private UUID id;
+    private String title;
+    private String environment;
+    private String version;
+    @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CheckListItem> items;
+    @ElementCollection
+    Set<String> tags;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
+
+    public CheckList() {
+        // Default constructor
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public List<CheckListItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<CheckListItem> items) {
+        this.items = items;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+}
