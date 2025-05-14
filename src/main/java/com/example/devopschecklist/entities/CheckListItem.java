@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
+@Table(name = "checklist_item")
 public class CheckListItem {
     @Id
     @GeneratedValue
