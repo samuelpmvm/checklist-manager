@@ -10,8 +10,8 @@
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>devopschecklist</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>devopschecklist</name>
+	<version>DYNAMIC-SNAPSHOT</version>
+	<name>devopsCheckList</name>
 	<description>Devops checklist</description>
 	<url/>
 	<licenses>
@@ -35,7 +35,7 @@
 		<jakarta.validation.version>3.1.1</jakarta.validation.version>
 		<jackson.version>2.18.2</jackson.version>
 		<swagger.version>2.2.15</swagger.version>
-		<postgresql.version>42.6.0</postgresql.version>
+		<postgresql.version>42.7.2</postgresql.version>
 		<h2.version>2.2.224</h2.version>
 	</properties>
 	<dependencies>
@@ -133,5 +133,28 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>3.4.0</version>
+					<executions>
+						<execution>
+							<id>add-source</id>
+							<phase>generate-sources</phase>
+							<goals>
+								<goal>add-source</goal>
+							</goals>
+							<configuration>
+								<sources>
+									<source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
+								</sources>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 </project>

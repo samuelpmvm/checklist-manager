@@ -7,6 +7,8 @@ info:
 paths:
   /checklist:
     get:
+      tags:
+        - CheckListManager
       summary: Get all checklists
       operationId: getCheckLists
       responses:
@@ -19,6 +21,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/ChecklistDto'
     post:
+      tags:
+        - CheckListManager
       summary: Create a new checklist
       operationId: createChecklist
       requestBody:
