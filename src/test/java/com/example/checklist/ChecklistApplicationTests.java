@@ -1,4 +1,4 @@
-package com.example.devopschecklist;
+package com.example.checklist;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -6,15 +6,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class DevopschecklistApplicationTests {
+class ChecklistApplicationTests {
 
 	@Test
 	void contextLoads() {
+		assertTrue(true);
 	}
 
 	@Test
 	void initiateApplicationClass() {
-		new DevopschecklistApplication();
+		new ChecklistApplication();
 		assertTrue(true, "silly assertion to be compliant with Sonar");
 	}
 

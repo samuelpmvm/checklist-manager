@@ -1,4 +1,4 @@
-package com.example.devopschecklist.entities;
+package com.example.checklist.entities;
 
 import jakarta.persistence.*;
 
@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "checklist")
-public class CheckList {
+public class Checklist {
     @Id
     @GeneratedValue
     private UUID id;
@@ -17,13 +17,13 @@ public class CheckList {
     private String environment;
     private String version;
     @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CheckListItem> items;
+    private List<ChecklistItem> items;
     @ElementCollection
     Set<String> tags;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 
-    public CheckList() {
+    public Checklist() {
         // Default constructor
     }
 
@@ -59,11 +59,11 @@ public class CheckList {
         this.version = version;
     }
 
-    public List<CheckListItem> getItems() {
+    public List<ChecklistItem> getItems() {
         return items;
     }
 
-    public void setItems(List<CheckListItem> items) {
+    public void setItems(List<ChecklistItem> items) {
         this.items = items;
     }
 

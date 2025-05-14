@@ -1,4 +1,4 @@
-package com.example.devopschecklist.entities;
+package com.example.checklist.entities;
 
 public enum Status {
     PENDING,

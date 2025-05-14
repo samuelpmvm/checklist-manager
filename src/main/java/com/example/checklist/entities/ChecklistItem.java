@@ -1,4 +1,4 @@
-package com.example.devopschecklist.entities;
+package com.example.checklist.entities;
 
 import jakarta.persistence.*;
 
@@ -6,7 +6,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "checklist_item")
-public class CheckListItem {
+public class ChecklistItem {
     @Id
     @GeneratedValue
     UUID id;
@@ -14,9 +14,9 @@ public class CheckListItem {
     @Enumerated(EnumType.STRING)
     Status status;
     @ManyToOne(fetch = FetchType.LAZY)
-    private CheckList checklist;
+    private Checklist checklist;
 
-    public CheckListItem() {
+    public ChecklistItem() {
         // Default constructor
     }
 
@@ -44,11 +44,11 @@ public class CheckListItem {
         this.status = status;
     }
 
-    public CheckList getChecklist() {
+    public Checklist getChecklist() {
         return checklist;
     }
 
-    public void setChecklist(CheckList checklist) {
+    public void setChecklist(Checklist checklist) {
         this.checklist = checklist;
     }
 }

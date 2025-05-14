@@ -8,34 +8,34 @@ paths:
   /checklist:
     get:
       tags:
-        - CheckListManager
+        - ChecklistManager
       summary: Get all checklists
       operationId: getCheckLists
       responses:
         '200':
           description: List of checklists
           content:
-            application/json:
+            application/checklist-v1+json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/ChecklistDto'
     post:
       tags:
-        - CheckListManager
+        - ChecklistManager
       summary: Create a new checklist
       operationId: createChecklist
       requestBody:
         required: true
         content:
-          application/json:
+          application/checklist-request-v1+json:
             schema:
               $ref: '#/components/schemas/ChecklistDto'
       responses:
         '201':
           description: Checklist created successfully
           content:
-            application/json:
+            application/checklist-v1+json:
               schema:
                 $ref: '#/components/schemas/ChecklistDto'
 components:
@@ -43,6 +43,9 @@ components:
     ChecklistDto:
       type: object
       properties:
+        id:
+            type: string
+            description: Unique identifier for the checklist
         title:
             type: string
             description: Title of the checklist
@@ -54,6 +57,7 @@ components:
             description: Version of the checklist
         tags:
             type: array
+            uniqueItems: true
             items:
                 type: string
             description: Tags associated with the checklist
@@ -69,5 +73,5 @@ components:
             description: Description of the checklist item
         status:
           type: string
-          enum: [PENDING, DONE, COMPLETED]
+          enum: [PENDING, DONE, BLOCKED]
           description: Status of the checklist item
