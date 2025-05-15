@@ -1,5 +1,6 @@
 package com.example.checklist.mapper;
 
+import com.example.checklist.entities.Checklist;
 import com.example.checklist.entities.ChecklistItem;
 import com.example.checklist.entities.Status;
 import org.openapitools.model.ChecklistItemDto;
@@ -16,10 +17,11 @@ public final class ChecklistItemMapper {
         return checklistItemDto;
     }
 
-    public static ChecklistItem toEntity (ChecklistItemDto checklistItemDto) {
+    public static ChecklistItem toEntity (Checklist checkList, ChecklistItemDto checklistItemDto) {
         var checkListItem = new ChecklistItem();
         checkListItem.setDescription(checklistItemDto.getDescription());
         checkListItem.setStatus(Status.valueOf(checklistItemDto.getStatus().name()));
+        checkListItem.setChecklist(checkList);
         return checkListItem;
     }
 }

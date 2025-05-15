@@ -64,6 +64,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ChecklistItemDto'
+        createdAt:
+            type: string
+            format: date-time
+            description: Creation date of the checklist
+        updatedAt:
+            type: string
+            format: date-time
+            description: Last update date of the checklist
     ChecklistItemDto:
       type: object
       properties:

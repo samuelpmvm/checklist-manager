@@ -1,19 +1,19 @@
 package com.example.checklist.service;
 
 import com.example.checklist.entities.Checklist;
+import com.example.checklist.mapper.ChecklistMapper;
 import com.example.checklist.repository.ChecklistRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openapitools.model.ChecklistDto;
 import org.openapitools.model.ChecklistItemDto;
 import org.openapitools.model.ChecklistTagDto;
 
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -52,6 +52,23 @@ class ChecklistManagerServiceTest {
         var checklistItem = checklist.getItems().getFirst();
         assertEquals(checklistItemDto.getDescription(), checklistItem.getDescription());
         assertEquals(checklistItemDto.getStatus().name(), checklistItem.getStatus().name());
+    }
+
+    @Test
+    void updateCheckList() {
+        var checklistDto = createChecklistDto();
+
+        var checkList = ChecklistMapper.toEntity(checklistDto);
+        var date = OffsetDateTime.now();
+
+        try (MockedStatic<OffsetDateTime> mockedStatic = Mockito.mockStatic(OffsetDateTime.class)) {
+            mockedStatic.when(OffsetDateTime::now).thenReturn(date);
+            Mockito.when(checkListRepository.findByTitleAndVersion(checklistDto.getTitle(), checklistDto.getVersion())).thenReturn(Optional.of(checkList));
+            checkListManagerService.createCheckList(checklistDto);
+
+            Mockito.verify(checkListRepository, Mockito.never()).save(ArgumentMatchers.any(Checklist.class));
+            Mockito.verify(checkListRepository, Mockito.times(1)).updateUpdatedAt(date, checkList.getTitle(), checklistDto.getVersion());
+        }
     }
 
     private static ChecklistDto createChecklistDto() {

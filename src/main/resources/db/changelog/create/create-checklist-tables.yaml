@@ -49,6 +49,14 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
+      id: create_unique_constraint-checklist-table
+      author: CHECKLIST
+      changes:
+        - addUniqueConstraint:
+            tableName: checklist
+            columnNames: title, version
+            constraintName: uc_checklist_title_version
+  - changeSet:
       id: create-checklist-item-table
       author: CHECKLIST
       preConditions:
