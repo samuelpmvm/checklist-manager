@@ -7,3 +7,19 @@ services:
       POSTGRES_PASSWORD: checklist
     ports:
       - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  checklist:
+    image: checklist-app
+    environment:
+      SCHEMA_DB: checklist_schema
+      DB_NAME: checklist_db
+      DB_HOST: postgres
+      DB_USER: checklist
+      DB_PASSWORD: checklist
+    depends_on:
+      - postgres
+
+    ports:
+      - "8080:8080"
+
