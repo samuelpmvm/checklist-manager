@@ -1,6 +1,7 @@
 package com.example.checklist.service;
 
 import com.example.checklist.entities.Checklist;
+import com.example.checklist.entities.ChecklistItem;
 import com.example.checklist.mapper.ChecklistMapper;
 import com.example.checklist.repository.ChecklistRepository;
 import org.openapitools.model.ChecklistDto;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Service
 public class ChecklistManagerService {
@@ -38,6 +40,10 @@ public class ChecklistManagerService {
                     checkListRepository.save(checkList);
                 });
         return checkList;
+    }
+
+    public List<Checklist> getAllCheckList() {
+        return checkListRepository.findAll();
     }
 
 }

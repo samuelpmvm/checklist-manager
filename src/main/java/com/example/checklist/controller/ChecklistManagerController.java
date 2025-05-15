@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1")
 public class ChecklistManagerController implements ChecklistManagerApi {
@@ -25,6 +27,11 @@ public class ChecklistManagerController implements ChecklistManagerApi {
     ) {
         var checkList = checkListManagerService.createCheckList(checklistDto);
         return ResponseEntity.ok(ChecklistMapper.toDto(checkList));
+    }
 
+    @Override
+    public ResponseEntity<List<ChecklistDto>> getCheckLists() {
+        var checkLists = checkListManagerService.getAllCheckList();
+        return ResponseEntity.ok(checkLists.stream().map(ChecklistMapper::toDto).toList());
     }
 }

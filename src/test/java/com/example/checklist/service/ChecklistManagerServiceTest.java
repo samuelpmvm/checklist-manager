@@ -71,6 +71,17 @@ class ChecklistManagerServiceTest {
         }
     }
 
+    @Test
+    void getAllCheckList() {
+        var checkList = ChecklistMapper.toEntity(createChecklistDto());
+        Mockito.when(checkListRepository.findAll()).thenReturn(List.of(checkList));
+
+        var listOfCheckList = checkListManagerService.getAllCheckList();
+        Mockito.verify(checkListRepository, Mockito.times(1)).findAll();
+        assertEquals(checkList, listOfCheckList.getFirst());
+
+    }
+
     private static ChecklistDto createChecklistDto() {
         var checklistDto = new ChecklistDto();
         checklistDto.setTitle(TITLE);

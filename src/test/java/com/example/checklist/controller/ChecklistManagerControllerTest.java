@@ -65,7 +65,7 @@ class ChecklistManagerControllerTest {
                           ]
                         }
                         """.formatted(TITLE, ENVIRONMENT, TAG, VERSION, DESCRIPTION));
-        mockMvc.perform(request).andDo(print())
+        mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(ID))
                 .andExpect(jsonPath("$.title").value(TITLE))
@@ -74,6 +74,26 @@ class ChecklistManagerControllerTest {
                 .andExpect(jsonPath("$.version").value(VERSION))
                 .andExpect(jsonPath("$.items[0].description").value(DESCRIPTION))
                 .andExpect(jsonPath("$.items[0].status").value(Status.DONE.toString()));
+    }
+
+    @Test
+    void getCheckListsSucceeded() throws Exception {
+
+        Mockito.when(checkListManagerService.getAllCheckList()).thenReturn(List.of(createChecklist()));
+
+        final var request = MockMvcRequestBuilders
+                .get("/api/v1/checklist")
+                .contentType(ChecklistManagerController.APPLICATION_CHECKLIST_REQUEST_V_1_JSON);
+
+        mockMvc.perform(request).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].id").value(ID))
+                .andExpect(jsonPath("$.[0].title").value(TITLE))
+                .andExpect(jsonPath("$.[0].environment").value(ENVIRONMENT))
+                .andExpect(jsonPath("$.[0].tags[0].tag").value(TAG))
+                .andExpect(jsonPath("$.[0].version").value(VERSION))
+                .andExpect(jsonPath("$.[0].items[0].description").value(DESCRIPTION))
+                .andExpect(jsonPath("$.[0].items[0].status").value(Status.DONE.toString()));
     }
 
     private static Checklist createChecklist() {
