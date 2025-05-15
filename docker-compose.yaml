@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: checklist_db
+      POSTGRES_USER: checklist
+      POSTGRES_PASSWORD: checklist
+    ports:
+      - "5432:5432"
