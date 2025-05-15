@@ -19,7 +19,6 @@ services:
       DB_PASSWORD: checklist
     depends_on:
       - postgres
-
     ports:
       - "8080:8080"
 

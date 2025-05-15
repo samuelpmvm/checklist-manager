@@ -1,7 +1,6 @@
 package com.example.checklist.service;
 
 import com.example.checklist.entities.Checklist;
-import com.example.checklist.entities.ChecklistItem;
 import com.example.checklist.mapper.ChecklistMapper;
 import com.example.checklist.repository.ChecklistRepository;
 import org.openapitools.model.ChecklistDto;
