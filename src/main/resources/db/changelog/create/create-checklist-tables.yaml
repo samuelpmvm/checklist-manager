@@ -1,0 +1,156 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-checklist-table
+      author: CHECKLIST
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: checklist
+      changes:
+        - createTable:
+            tableName: checklist
+            schemaName: ${checklist.dbname}
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: environment
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: environment
+                  type: VARCHAR(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tags
+                  type: LONGTEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: DATETIME(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: DATETIME(3)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create-checklist-item-table
+      author: CHECKLIST
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: checklist_item
+      changes:
+        - createTable:
+            tableName: checklist_item
+            schemaName: ${checklist.dbname}
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                    name: checklist_id
+                    type: UUID
+                    constraints:
+                        nullable: false
+  - changeSet:
+      id: create-foreign-key-constraint-checklist-item
+      author: CHECKLIST
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: checklist_item
+            baseColumnNames: checklist_id
+            referencedTableName: checklist
+            referencedColumnNames: id
+            constraintName: fk_checklist_item_checklist
+            onDelete: CASCADE
+
+  - changeSet:
+      id: create-checklist-tag-table
+      author: CHECKLIST
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: checklist_tag
+      changes:
+        - createTable:
+            tableName: checklist_tag
+            schemaName: ${checklist.dbname}
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tag
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: checklist_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create-foreign-key-constraint-checklist-tag
+      author: CHECKLIST
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: checklist_tag
+            baseColumnNames: checklist_id
+            referencedTableName: checklist
+            referencedColumnNames: id
+            constraintName: fk_checklist_item_checklist
+            onDelete: CASCADE
+  - changeSet:
+      id: create-idx-checklist-tag
+      author: CHECKLIST
+      changes:
+        - createIndex:
+            tableName: checklist_tag
+            indexName: idx-checklist-tag
+            columns:
+              - column:
+                  name: checklist_id
+  - changeSet:
+      id: create-idx-checklist-item
+      author: CHECKLIST
+      changes:
+        - createIndex:
+            tableName: checklist_item
+            indexName: idx-checklist-item
+            columns:
+              - column:
+                  name: checklist_id

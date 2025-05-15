@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -18,10 +17,10 @@ public class Checklist {
     private String version;
     @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChecklistItem> items;
-    @ElementCollection
-    Set<String> tags;
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
+    @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CheckListTag> tags;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public Checklist() {
         // Default constructor
@@ -67,11 +66,11 @@ public class Checklist {
         this.items = items;
     }
 
-    public Set<String> getTags() {
+    public List<CheckListTag> getTags() {
         return tags;
     }
 
-    public void setTags(Set<String> tags) {
+    public void setTags(List<CheckListTag> tags) {
         this.tags = tags;
     }
 

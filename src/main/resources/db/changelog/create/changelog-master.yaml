@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - property:
+        name: checklist.dbname
+        value: checklist_db
+  - include:
+      file: create-checklist-tables.yaml
+      relativeToChangelogFile: true

@@ -16,7 +16,8 @@ public final class ChecklistMapper {
         checklistDto.setVersion(checkList.getVersion());
         var checkListItemDto = checkList.getItems().stream().map(ChecklistItemMapper::toDto).toList();
         checklistDto.setItems(checkListItemDto);
-        checklistDto.setTags(checkList.getTags());
+        var checkListTagDto = checkList.getTags().stream().map(CheckListTagMapper::toDto).toList();
+        checklistDto.setTags(checkListTagDto);
 
         return checklistDto;
     }
@@ -24,11 +25,12 @@ public final class ChecklistMapper {
     public static Checklist toEntity(ChecklistDto checklistDto) {
         var checklist = new Checklist();
         checklist.setEnvironment(checklistDto.getEnvironment());
-        checklist.setTitle(checklistDto.getTitle());
         checklist.setVersion(checklistDto.getVersion());
+        checklist.setTitle(checklistDto.getTitle());
         var checkListItem = checklistDto.getItems().stream().map(ChecklistItemMapper::toEntity).toList();
         checklist.setItems(checkListItem);
-        checklist.setTags(checklistDto.getTags());
+        var checkListTag = checklistDto.getTags().stream().map(CheckListTagMapper::toEntity).toList();
+        checklist.setTags(checkListTag);
 
         return checklist;
     }

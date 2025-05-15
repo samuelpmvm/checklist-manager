@@ -57,9 +57,8 @@ components:
             description: Version of the checklist
         tags:
             type: array
-            uniqueItems: true
             items:
-                type: string
+                $ref: '#/components/schemas/ChecklistTagDto'
             description: Tags associated with the checklist
         items:
           type: array
@@ -75,3 +74,9 @@ components:
           type: string
           enum: [PENDING, DONE, BLOCKED]
           description: Status of the checklist item
+    ChecklistTagDto:
+      type: object
+      properties:
+        tag:
+          type: string
+          description: Tag of the checklist

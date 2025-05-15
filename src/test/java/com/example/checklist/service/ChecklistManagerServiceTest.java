@@ -11,9 +11,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openapitools.model.ChecklistDto;
 import org.openapitools.model.ChecklistItemDto;
+import org.openapitools.model.ChecklistTagDto;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,7 +22,7 @@ class ChecklistManagerServiceTest {
 
     private static final String TITLE = "title";
     private static final String ENVIRONMENT = "test";
-    private static final Set<String> TAGS_SET = Set.of("tag1", "tag2");
+    private static final String TAG = "tag1";
     private static final String VERSION = "1.0.0";
     private static final String DESCRIPTION = "description";
 
@@ -46,7 +46,7 @@ class ChecklistManagerServiceTest {
         var checklist = checkListArgumentCaptor.getValue();
         assertEquals(checklistDto.getTitle(), checklist.getTitle());
         assertEquals(checklistDto.getEnvironment(), checklist.getEnvironment());
-        assertEquals(checklistDto.getTags(), checklist.getTags());
+        assertEquals(checklistDto.getTags().getFirst().getTag(), checklist.getTags().getFirst().getTag());
         assertEquals(checklistDto.getVersion(), checklist.getVersion());
 
         var checklistItem = checklist.getItems().getFirst();
@@ -58,8 +58,11 @@ class ChecklistManagerServiceTest {
         var checklistDto = new ChecklistDto();
         checklistDto.setTitle(TITLE);
         checklistDto.environment(ENVIRONMENT);
-        checklistDto.setTags(TAGS_SET);
         checklistDto.setVersion(VERSION);
+
+        var checkListTagDto = new ChecklistTagDto();
+        checkListTagDto.setTag(TAG);
+        checklistDto.setTags(List.of(checkListTagDto));
 
         var checkListItemDto = new ChecklistItemDto();
         checkListItemDto.setDescription(DESCRIPTION);

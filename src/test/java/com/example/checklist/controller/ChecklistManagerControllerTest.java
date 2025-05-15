@@ -1,5 +1,6 @@
 package com.example.checklist.controller;
 
+import com.example.checklist.entities.CheckListTag;
 import com.example.checklist.entities.Checklist;
 import com.example.checklist.entities.ChecklistItem;
 import com.example.checklist.entities.Status;
@@ -15,9 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,7 +27,7 @@ class ChecklistManagerControllerTest {
 
     private static final String TITLE = "title";
     private static final String ENVIRONMENT = "test";
-    private static final Set<String> TAG_SET = Set.of("tag1", "tag2");
+    private static final String TAG = "tag1";
     private static final String VERSION = "1.0.0";
     private static final String DESCRIPTION = "description";
     private static final String ID = "0d75f424-0ee4-48f8-83cd-c2067ab0c9bb";
@@ -51,8 +52,9 @@ class ChecklistManagerControllerTest {
                           "title": "%s",
                           "environment": "%s",
                           "tags": [
-                            "%s",
-                            "%s"
+                            {
+                              "tag": "%s"
+                            }
                           ],
                           "version": "%s",
                           "items": [
@@ -62,13 +64,13 @@ class ChecklistManagerControllerTest {
                             }
                           ]
                         }
-                        """.formatted(TITLE, ENVIRONMENT, TAG_SET.toArray()[0], TAG_SET.toArray()[1], VERSION, DESCRIPTION));
-        mockMvc.perform(request).andExpect(status().isOk())
+                        """.formatted(TITLE, ENVIRONMENT, TAG, VERSION, DESCRIPTION));
+        mockMvc.perform(request).andDo(print())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(ID))
                 .andExpect(jsonPath("$.title").value(TITLE))
                 .andExpect(jsonPath("$.environment").value(ENVIRONMENT))
-                .andExpect(jsonPath("$.tags[0]").value(TAG_SET.toArray()[0]))
-                .andExpect(jsonPath("$.tags[1]").value(TAG_SET.toArray()[1]))
+                .andExpect(jsonPath("$.tags[0].tag").value(TAG))
                 .andExpect(jsonPath("$.version").value(VERSION))
                 .andExpect(jsonPath("$.items[0].description").value(DESCRIPTION))
                 .andExpect(jsonPath("$.items[0].status").value(Status.DONE.toString()));
@@ -79,8 +81,11 @@ class ChecklistManagerControllerTest {
         checklist.setId(UUID.fromString(ID));
         checklist.setTitle(TITLE);
         checklist.setEnvironment(ENVIRONMENT);
-        checklist.setTags(TAG_SET);
         checklist.setVersion(VERSION);
+
+        var checkListTag = new CheckListTag();
+        checkListTag.setTag(TAG);
+        checklist.setTags(List.of(checkListTag));
 
         var checkListItem = new ChecklistItem();
         checkListItem.setDescription(DESCRIPTION);

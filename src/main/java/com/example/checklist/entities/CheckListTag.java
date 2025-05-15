@@ -5,19 +5,19 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "checklist_item")
-public class ChecklistItem {
+@Table(name = "checklist_tag")
+public class CheckListTag {
     @Id
     @GeneratedValue
     private UUID id;
-    private String description;
-    @Enumerated(EnumType.STRING)
-    private Status status;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    private String tag;
+
+    @ManyToOne
     @JoinColumn(name = "checklist_id")
     private Checklist checklist;
 
-    public ChecklistItem() {
+    public CheckListTag() {
         // Default constructor
     }
 
@@ -29,20 +29,12 @@ public class ChecklistItem {
         this.id = id;
     }
 
-    public String getDescription() {
-        return description;
+    public String getTag() {
+        return tag;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public Checklist getChecklist() {
