@@ -10,7 +10,6 @@ databaseChangeLog:
       changes:
         - createTable:
             tableName: checklist
-            schemaName: ${checklist.dbname}
             columns:
               - column:
                   name: id
@@ -29,7 +28,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: environment
+                  name: version
                   type: VARCHAR(36)
                   constraints:
                     nullable: false
@@ -67,7 +66,6 @@ databaseChangeLog:
       changes:
         - createTable:
             tableName: checklist_item
-            schemaName: ${checklist.dbname}
             columns:
               - column:
                   name: id
@@ -113,7 +111,6 @@ databaseChangeLog:
       changes:
         - createTable:
             tableName: checklist_tag
-            schemaName: ${checklist.dbname}
             columns:
               - column:
                   name: id
