@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -34,5 +35,11 @@ public class ChecklistManagerController implements ChecklistManagerApi {
     public ResponseEntity<List<ChecklistDto>> getCheckLists() {
         var checkLists = checkListManagerService.getAllCheckList();
         return ResponseEntity.ok(checkLists.stream().map(ChecklistMapper::toDto).toList());
+    }
+
+    @Override
+    public ResponseEntity<ChecklistDto> updateChecklist(String id) throws ChecklistException {
+        var checkList = checkListManagerService.updateChecklist(UUID.fromString(id));
+        return ResponseEntity.ok(ChecklistMapper.toDto(checkList));
     }
 }

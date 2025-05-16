@@ -38,6 +38,26 @@ paths:
             application/checklist-v1+json:
               schema:
                 $ref: '#/components/schemas/ChecklistDto'
+  /checklist/{id}:
+    put:
+      tags:
+        - ChecklistManager
+      summary: Update checklist
+      operationId: updateChecklist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the checklist to update
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Checklist updated successfully
+          content:
+            application/checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ChecklistDto'
 components:
   schemas:
     ChecklistDto:

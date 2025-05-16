@@ -77,6 +77,27 @@ class ChecklistManagerControllerTest {
     }
 
     @Test
+    void updateChecklistSucceeded() throws Exception {
+
+        Mockito.when(checkListManagerService.updateChecklist(UUID.fromString(ID))).thenReturn(createChecklist());
+
+        final var request = MockMvcRequestBuilders
+                .put(String.format("/api/v1/checklist/%s", ID))
+                .contentType(ChecklistManagerController.APPLICATION_CHECKLIST_REQUEST_V_1_JSON)
+                .accept(ChecklistManagerController.APPLICATION_CHECKLIST_V_1_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(ID))
+                .andExpect(jsonPath("$.title").value(TITLE))
+                .andExpect(jsonPath("$.environment").value(ENVIRONMENT))
+                .andExpect(jsonPath("$.tags[0].tag").value(TAG))
+                .andExpect(jsonPath("$.version").value(VERSION))
+                .andExpect(jsonPath("$.items[0].description").value(DESCRIPTION))
+                .andExpect(jsonPath("$.items[0].status").value(Status.DONE.toString()));
+    }
+
+    @Test
     void getCheckListsSucceeded() throws Exception {
 
         Mockito.when(checkListManagerService.getAllCheckList()).thenReturn(List.of(createChecklist()));

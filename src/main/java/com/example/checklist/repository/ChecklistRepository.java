@@ -20,6 +20,6 @@ public interface ChecklistRepository extends JpaRepository<Checklist, UUID> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE Checklist c SET c.updatedAt = :updatedAt WHERE c.title = :title AND c.version = :version")
-    void updateUpdatedAt(@Param("updatedAt") OffsetDateTime updatedAt, @Param("title") String title, @Param("version") String version);
+    @Query("UPDATE Checklist c SET c.updatedAt = :updatedAt WHERE c.id = :id")
+    void updateUpdatedAt(@Param("updatedAt") OffsetDateTime updatedAt, @Param("id") UUID id);
 }

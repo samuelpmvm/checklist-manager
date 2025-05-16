@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ChecklistManagerService {
@@ -24,27 +25,30 @@ public class ChecklistManagerService {
     }
 
     public Checklist createCheckList(ChecklistDto checklistDto) throws ChecklistException {
-        LOGGER.info("Creating checklist with title: {}", checklistDto.getTitle());
-        try {
-            var checkList = ChecklistMapper.toEntity(checklistDto);
-            checkListRepository
-                    .findByTitleAndVersion(checklistDto.getTitle(), checklistDto.getVersion())
-                    .ifPresentOrElse(oldChecklist -> {
-                        LOGGER.info("Checklist with title {} and version {} already exists, updating it", checkList.getTitle(), checkList.getVersion());
-                        checkList.setCreatedAt(oldChecklist.getCreatedAt());
-                        checkList.setUpdatedAt(OffsetDateTime.now());
-                        checkListRepository.updateUpdatedAt(checkList.getUpdatedAt(), checkList.getTitle(), checkList.getVersion());
-                    }, () -> {
-                        LOGGER.info("Checklist with title {} and version {} does not exist, creating a new one", checklistDto.getTitle(), checklistDto.getVersion());
-                        var date = OffsetDateTime.now();
-                        checkList.setCreatedAt(date);
-                        checkList.setUpdatedAt(date);
-                        checkListRepository.save(checkList);
-                    });
-            return checkList;
+        LOGGER.info("Creating checklist with title {} and version {}", checklistDto.getTitle(), checklistDto.getVersion());
+        var checkList = ChecklistMapper.toEntity(checklistDto);
+        if (checkListRepository.findByTitleAndVersion(checklistDto.getTitle(), checklistDto.getVersion()).isEmpty()) {
+            LOGGER.info("Checklist with title {} and version {} does not exist, creating a new one", checklistDto.getTitle(), checklistDto.getVersion());
+            var date = OffsetDateTime.now();
+            checkList.setCreatedAt(date);
+            checkList.setUpdatedAt(date);
+            return checkListRepository.save(checkList);
+        } else {
+            throw new ChecklistException(ChecklistError.CHECKLIST_ALREADY_EXISTS);
         }
-        catch (Exception exception) {
-            throw new ChecklistException(ChecklistError.GENERIC_ERROR, exception);
+    }
+
+    public Checklist updateChecklist(UUID id) throws ChecklistException {
+        var checkListOpt = checkListRepository.findById(id);
+        if (checkListOpt.isPresent()) {
+            var checklist = checkListOpt.get();
+            LOGGER.info("Updating checklist with id: {}", id);
+            checklist.setUpdatedAt(OffsetDateTime.now());
+            checkListRepository.updateUpdatedAt(checklist.getUpdatedAt(), id);
+            return checklist;
+        } else {
+            LOGGER.error("Checklist with id {} was not found", id);
+            throw new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND);
         }
     }
 

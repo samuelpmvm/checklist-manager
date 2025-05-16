@@ -15,8 +15,10 @@ import org.openapitools.model.ChecklistTagDto;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class ChecklistManagerServiceTest {
@@ -26,6 +28,7 @@ class ChecklistManagerServiceTest {
     private static final String TAG = "tag1";
     private static final String VERSION = "1.0.0";
     private static final String DESCRIPTION = "description";
+    private static final UUID CHECKLIST_ID = UUID.fromString("b5ac6cd8-85d2-459c-b593-5b9fea7247f7");
 
     @InjectMocks
     private ChecklistManagerService checkListManagerService;
@@ -36,7 +39,7 @@ class ChecklistManagerServiceTest {
 
 
     @Test
-    void createCheckList() throws ChecklistException {
+    void createCheckListSuccess() throws ChecklistException {
         var checklistDto = createChecklistDto();
         var checklistItemDto = checklistDto.getItems().getFirst();
         ArgumentCaptor<Checklist> checkListArgumentCaptor = ArgumentCaptor.forClass(Checklist.class);
@@ -56,20 +59,36 @@ class ChecklistManagerServiceTest {
     }
 
     @Test
+    void createCheckListAlreadyCreatedFails() {
+        var checklistDto = createChecklistDto();
+        Mockito.when(checkListRepository.findByTitleAndVersion(checklistDto.getTitle(), checklistDto.getVersion()))
+                .thenReturn(Optional.of(ChecklistMapper.toEntity(checklistDto)));
+        var checkListException = assertThrows(ChecklistException.class, () -> checkListManagerService.createCheckList(checklistDto));
+        assertEquals(1002, checkListException.getChecklistError().getErrorCode());
+    }
+
+    @Test
     void updateCheckList() throws ChecklistException {
         var checklistDto = createChecklistDto();
 
         var checkList = ChecklistMapper.toEntity(checklistDto);
+        checkList.setId(CHECKLIST_ID);
         var date = OffsetDateTime.now();
 
         try (MockedStatic<OffsetDateTime> mockedStatic = Mockito.mockStatic(OffsetDateTime.class)) {
             mockedStatic.when(OffsetDateTime::now).thenReturn(date);
-            Mockito.when(checkListRepository.findByTitleAndVersion(checklistDto.getTitle(), checklistDto.getVersion())).thenReturn(Optional.of(checkList));
-            checkListManagerService.createCheckList(checklistDto);
-
-            Mockito.verify(checkListRepository, Mockito.never()).save(ArgumentMatchers.any(Checklist.class));
-            Mockito.verify(checkListRepository, Mockito.times(1)).updateUpdatedAt(date, checkList.getTitle(), checklistDto.getVersion());
+            Mockito.when(checkListRepository.findById(CHECKLIST_ID)).thenReturn(Optional.of(checkList));
+            checkListManagerService.updateChecklist(CHECKLIST_ID);
+            Mockito.verify(checkListRepository, Mockito.times(1)).updateUpdatedAt(date, checkList.getId());
         }
+    }
+
+    @Test
+    void updateNonExistingCheckListFails() {
+        Mockito.when(checkListRepository.findById(CHECKLIST_ID))
+                .thenReturn(Optional.empty());
+        var checkListException = assertThrows(ChecklistException.class, () -> checkListManagerService.updateChecklist(CHECKLIST_ID));
+        assertEquals(1001, checkListException.getChecklistError().getErrorCode());
     }
 
     @Test
