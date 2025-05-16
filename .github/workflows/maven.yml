@@ -34,7 +34,8 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
-    - name: Update dependency graph
-      uses: advanced-security/maven-dependency-submission-action@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+## Disabled when the repo is private
+#    - name: Update dependency graph
+#      uses: advanced-security/maven-dependency-submission-action@v3
+#      with:
+#        token: ${{ secrets.GITHUB_TOKEN }}
