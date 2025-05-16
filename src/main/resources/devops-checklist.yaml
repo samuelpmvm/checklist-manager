@@ -58,6 +58,27 @@ paths:
             application/checklist-v1+json:
               schema:
                 $ref: '#/components/schemas/ChecklistDto'
+    get:
+      tags:
+        - ChecklistManager
+      summary: Get checklist by Id
+      operationId: getCheckListById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the checklist that we want to get
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Gets the checklist
+          content:
+            application/checklist-v1+json:
+              schema:
+                  $ref: '#/components/schemas/ChecklistDto'
+        '204':
+          description: Checklist with Id not found
 components:
   schemas:
     ChecklistDto:

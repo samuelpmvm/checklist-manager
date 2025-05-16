@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -52,8 +53,14 @@ public class ChecklistManagerService {
         }
     }
 
-    public List<Checklist> getAllCheckList() {
+    public List<Checklist> getAllChecklist() {
+        LOGGER.info("Getting all Checklists");
         return checkListRepository.findAll();
+    }
+
+    public Optional<Checklist> getCheckListById(UUID id) {
+        LOGGER.info("Getting Checklist with id: {}", id);
+        return checkListRepository.findById(id);
     }
 
 }

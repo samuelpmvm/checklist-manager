@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class ChecklistManagerServiceTest {
@@ -92,14 +91,32 @@ class ChecklistManagerServiceTest {
     }
 
     @Test
-    void getAllCheckList() {
+    void getAllChecklist() {
         var checkList = ChecklistMapper.toEntity(createChecklistDto());
         Mockito.when(checkListRepository.findAll()).thenReturn(List.of(checkList));
 
-        var listOfCheckList = checkListManagerService.getAllCheckList();
+        var listOfCheckList = checkListManagerService.getAllChecklist();
         Mockito.verify(checkListRepository, Mockito.times(1)).findAll();
         assertEquals(checkList, listOfCheckList.getFirst());
+    }
 
+    @Test
+    void getChecklistByIdSuccess() {
+        var checkList = ChecklistMapper.toEntity(createChecklistDto());
+        Mockito.when(checkListRepository.findById(CHECKLIST_ID)).thenReturn(Optional.of(checkList));
+
+        var checklistOptional = checkListManagerService.getCheckListById(CHECKLIST_ID);
+        Mockito.verify(checkListRepository, Mockito.times(1)).findById(CHECKLIST_ID);
+        assertEquals(checkList, checklistOptional.get());
+    }
+
+    @Test
+    void getChecklistByIdReturnsEmpty() {
+        Mockito.when(checkListRepository.findById(CHECKLIST_ID)).thenReturn(Optional.empty());
+
+        var checklistOptional = checkListManagerService.getCheckListById(CHECKLIST_ID);
+        Mockito.verify(checkListRepository, Mockito.times(1)).findById(CHECKLIST_ID);
+        assertTrue(checklistOptional.isEmpty());
     }
 
     private static ChecklistDto createChecklistDto() {
