@@ -1,5 +1,6 @@
 package com.example.checklist.controller;
 
+import com.example.checklist.exception.ChecklistException;
 import com.example.checklist.mapper.ChecklistMapper;
 import com.example.checklist.service.ChecklistManagerService;
 import org.openapitools.api.ChecklistManagerApi;
@@ -24,7 +25,7 @@ public class ChecklistManagerController implements ChecklistManagerApi {
 
     @Override
     public ResponseEntity<ChecklistDto> createChecklist(ChecklistDto checklistDto
-    ) {
+    ) throws ChecklistException {
         var checkList = checkListManagerService.createCheckList(checklistDto);
         return ResponseEntity.ok(ChecklistMapper.toDto(checkList));
     }

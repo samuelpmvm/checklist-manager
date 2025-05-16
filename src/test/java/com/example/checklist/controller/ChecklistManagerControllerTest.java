@@ -3,7 +3,7 @@ package com.example.checklist.controller;
 import com.example.checklist.entities.CheckListTag;
 import com.example.checklist.entities.Checklist;
 import com.example.checklist.entities.ChecklistItem;
-import com.example.checklist.entities.Status;
+import com.example.checklist.resources.Status;
 import com.example.checklist.service.ChecklistManagerService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;

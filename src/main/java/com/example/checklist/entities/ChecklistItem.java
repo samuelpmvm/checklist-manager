@@ -1,5 +1,6 @@
 package com.example.checklist.entities;
 
+import com.example.checklist.resources.Status;
 import jakarta.persistence.*;
 
 import java.util.UUID;

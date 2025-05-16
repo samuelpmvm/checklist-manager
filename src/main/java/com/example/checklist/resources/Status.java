@@ -1,4 +1,4 @@
-package com.example.checklist.entities;
+package com.example.checklist.resources;
 
 public enum Status {
     PENDING,

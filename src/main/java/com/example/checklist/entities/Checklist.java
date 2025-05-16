@@ -13,14 +13,14 @@ public class Checklist {
     @GeneratedValue
     private UUID id;
     private String title;
-    private String environment;
     private String version;
+    private String environment;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
     @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChecklistItem> items;
     @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CheckListTag> tags;
-    private OffsetDateTime createdAt;
-    private OffsetDateTime updatedAt;
 
     public Checklist() {
         // Default constructor

@@ -2,7 +2,7 @@ package com.example.checklist.mapper;
 
 import com.example.checklist.entities.Checklist;
 import com.example.checklist.entities.ChecklistItem;
-import com.example.checklist.entities.Status;
+import com.example.checklist.resources.Status;
 import org.openapitools.model.ChecklistItemDto;
 
 public final class ChecklistItemMapper {

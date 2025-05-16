@@ -1,6 +1,7 @@
 package com.example.checklist.service;
 
 import com.example.checklist.entities.Checklist;
+import com.example.checklist.exception.ChecklistException;
 import com.example.checklist.mapper.ChecklistMapper;
 import com.example.checklist.repository.ChecklistRepository;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ class ChecklistManagerServiceTest {
 
 
     @Test
-    void createCheckList() {
+    void createCheckList() throws ChecklistException {
         var checklistDto = createChecklistDto();
         var checklistItemDto = checklistDto.getItems().getFirst();
         ArgumentCaptor<Checklist> checkListArgumentCaptor = ArgumentCaptor.forClass(Checklist.class);
@@ -55,7 +56,7 @@ class ChecklistManagerServiceTest {
     }
 
     @Test
-    void updateCheckList() {
+    void updateCheckList() throws ChecklistException {
         var checklistDto = createChecklistDto();
 
         var checkList = ChecklistMapper.toEntity(checklistDto);

@@ -33,11 +33,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: tags
-                  type: LONGTEXT
-                  constraints:
-                    nullable: false
-              - column:
                   name: created_at
                   type: DATETIME(3)
                   constraints:
