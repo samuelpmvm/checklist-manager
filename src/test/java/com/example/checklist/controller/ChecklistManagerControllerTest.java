@@ -3,6 +3,8 @@ package com.example.checklist.controller;
 import com.example.checklist.entities.CheckListTag;
 import com.example.checklist.entities.Checklist;
 import com.example.checklist.entities.ChecklistItem;
+import com.example.checklist.exception.ChecklistError;
+import com.example.checklist.exception.GlobalExceptionHandler;
 import com.example.checklist.resources.Status;
 import com.example.checklist.service.ChecklistManagerService;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import org.mockito.Mockito;
 import org.openapitools.model.ChecklistDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -19,10 +22,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ChecklistManagerController.class)
+@Import(GlobalExceptionHandler.class)
 class ChecklistManagerControllerTest {
 
     private static final String TITLE = "title";
@@ -136,14 +139,22 @@ class ChecklistManagerControllerTest {
     }
 
     @Test
-    void getCheckListByIdReturnsNothing() throws Exception {
+    void getCheckListByIdNotFound() throws Exception {
 
         Mockito.when(checkListManagerService.getCheckListById(UUID.fromString(ID)))
                 .thenReturn(Optional.empty());
         final var request = MockMvcRequestBuilders.get(String.format("/api/v1/checklist/%s", ID));
 
         mockMvc.perform(request)
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getCheckListByIdBadRequest() throws Exception {
+        final var request = MockMvcRequestBuilders.get(String.format("/api/v1/checklist/%s", "1"));
+        mockMvc.perform(request)
+                .andExpect(status().is(ChecklistError.BAD_REQUEST_ERROR.getErrorCode()))
+                .andExpect(content().contentType("application/error-checklist-v1+json"));
     }
 
     private static Checklist createChecklist() {

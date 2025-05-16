@@ -20,6 +20,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ChecklistDto'
+        '500':
+          description: Internal error
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - ChecklistManager
@@ -38,6 +44,24 @@ paths:
             application/checklist-v1+json:
               schema:
                 $ref: '#/components/schemas/ChecklistDto'
+        '204':
+          description: Checklist already exists
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Invalid checklist format
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /checklist/{id}:
     put:
       tags:
@@ -58,6 +82,24 @@ paths:
             application/checklist-v1+json:
               schema:
                 $ref: '#/components/schemas/ChecklistDto'
+        '400':
+          description: Invalid UUID format
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Checklist with Id not found
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     get:
       tags:
         - ChecklistManager
@@ -77,8 +119,24 @@ paths:
             application/checklist-v1+json:
               schema:
                   $ref: '#/components/schemas/ChecklistDto'
-        '204':
+        '400':
+          description: Invalid UUID format
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
           description: Checklist with Id not found
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     ChecklistDto:
@@ -129,3 +187,12 @@ components:
         tag:
           type: string
           description: Tag of the checklist
+    ErrorResponse:
+      type: object
+      properties:
+        title:
+          type: string
+        code:
+          type: integer
+        message:
+          type: string

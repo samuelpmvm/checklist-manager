@@ -47,6 +47,6 @@ public class ChecklistManagerController implements ChecklistManagerApi {
         return checkListManagerService.getCheckListById(UUID.fromString(id))
                 .map(ChecklistMapper::toDto)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.noContent().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 }
