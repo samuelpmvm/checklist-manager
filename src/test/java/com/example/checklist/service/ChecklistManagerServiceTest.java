@@ -38,12 +38,12 @@ class ChecklistManagerServiceTest {
 
 
     @Test
-    void createCheckListSuccess() throws ChecklistException {
+    void createChecklistSuccess() throws ChecklistException {
         var checklistDto = createChecklistDto();
         var checklistItemDto = checklistDto.getItems().getFirst();
         ArgumentCaptor<Checklist> checkListArgumentCaptor = ArgumentCaptor.forClass(Checklist.class);
 
-        checkListManagerService.createCheckList(checklistDto);
+        checkListManagerService.createChecklist(checklistDto);
         Mockito.verify(checkListRepository).save(checkListArgumentCaptor.capture());
 
         var checklist = checkListArgumentCaptor.getValue();
@@ -58,12 +58,12 @@ class ChecklistManagerServiceTest {
     }
 
     @Test
-    void createCheckListAlreadyCreatedFails() {
+    void createChecklistAlreadyCreatedFails() {
         var checklistDto = createChecklistDto();
         Mockito.when(checkListRepository.findByTitleAndVersion(checklistDto.getTitle(), checklistDto.getVersion()))
                 .thenReturn(Optional.of(ChecklistMapper.toEntity(checklistDto)));
-        var checkListException = assertThrows(ChecklistException.class, () -> checkListManagerService.createCheckList(checklistDto));
-        assertEquals(1002, checkListException.getChecklistError().getErrorCode());
+        var checkListException = assertThrows(ChecklistException.class, () -> checkListManagerService.createChecklist(checklistDto));
+        assertEquals(402, checkListException.getChecklistError().getErrorCode());
     }
 
     @Test
@@ -87,7 +87,7 @@ class ChecklistManagerServiceTest {
         Mockito.when(checkListRepository.findById(CHECKLIST_ID))
                 .thenReturn(Optional.empty());
         var checkListException = assertThrows(ChecklistException.class, () -> checkListManagerService.updateChecklist(CHECKLIST_ID));
-        assertEquals(1001, checkListException.getChecklistError().getErrorCode());
+        assertEquals(401, checkListException.getChecklistError().getErrorCode());
     }
 
     @Test
@@ -105,7 +105,7 @@ class ChecklistManagerServiceTest {
         var checkList = ChecklistMapper.toEntity(createChecklistDto());
         Mockito.when(checkListRepository.findById(CHECKLIST_ID)).thenReturn(Optional.of(checkList));
 
-        var checklistOptional = checkListManagerService.getCheckListById(CHECKLIST_ID);
+        var checklistOptional = checkListManagerService.getChecklistById(CHECKLIST_ID);
         Mockito.verify(checkListRepository, Mockito.times(1)).findById(CHECKLIST_ID);
         assertEquals(checkList, checklistOptional.get());
     }
@@ -114,7 +114,7 @@ class ChecklistManagerServiceTest {
     void getChecklistByIdReturnsEmpty() {
         Mockito.when(checkListRepository.findById(CHECKLIST_ID)).thenReturn(Optional.empty());
 
-        var checklistOptional = checkListManagerService.getCheckListById(CHECKLIST_ID);
+        var checklistOptional = checkListManagerService.getChecklistById(CHECKLIST_ID);
         Mockito.verify(checkListRepository, Mockito.times(1)).findById(CHECKLIST_ID);
         assertTrue(checklistOptional.isEmpty());
     }

@@ -4,6 +4,7 @@ import com.example.checklist.entities.CheckListTag;
 import com.example.checklist.entities.Checklist;
 import com.example.checklist.entities.ChecklistItem;
 import com.example.checklist.exception.ChecklistError;
+import com.example.checklist.exception.ChecklistException;
 import com.example.checklist.exception.GlobalExceptionHandler;
 import com.example.checklist.resources.Status;
 import com.example.checklist.service.ChecklistManagerService;
@@ -34,6 +35,7 @@ class ChecklistManagerControllerTest {
     private static final String VERSION = "1.0.0";
     private static final String DESCRIPTION = "description";
     private static final String ID = "0d75f424-0ee4-48f8-83cd-c2067ab0c9bb";
+    public static final String APPLICATION_ERROR_CHECKLIST_V_1_JSON = "application/error-checklist-v1+json";
 
     @MockitoBean
     private ChecklistManagerService checkListManagerService;
@@ -44,7 +46,7 @@ class ChecklistManagerControllerTest {
     @Test
     void createChecklistSucceeded() throws Exception {
 
-        Mockito.when(checkListManagerService.createCheckList(ArgumentMatchers.any(ChecklistDto.class)))
+        Mockito.when(checkListManagerService.createChecklist(ArgumentMatchers.any(ChecklistDto.class)))
                 .thenReturn(createChecklist());
         final var request = MockMvcRequestBuilders
                 .post("/api/v1/checklist")
@@ -77,6 +79,43 @@ class ChecklistManagerControllerTest {
                 .andExpect(jsonPath("$.version").value(VERSION))
                 .andExpect(jsonPath("$.items[0].description").value(DESCRIPTION))
                 .andExpect(jsonPath("$.items[0].status").value(Status.DONE.toString()));
+    }
+
+    @Test
+    void createChecklistAlreadyExistsFails() throws Exception {
+
+        Mockito.doThrow(new ChecklistException(ChecklistError.CHECKLIST_ALREADY_EXISTS))
+                .when(checkListManagerService)
+                .createChecklist(ArgumentMatchers.any(ChecklistDto.class));
+        final var request = MockMvcRequestBuilders
+                .post("/api/v1/checklist")
+                .contentType(ChecklistManagerController.APPLICATION_CHECKLIST_REQUEST_V_1_JSON)
+                .accept(ChecklistManagerController.APPLICATION_CHECKLIST_V_1_JSON)
+                .content("""
+                        {
+                          "title": "%s",
+                          "environment": "%s",
+                          "tags": [
+                            {
+                              "tag": "%s"
+                            }
+                          ],
+                          "version": "%s",
+                          "items": [
+                            {
+                              "description": "%s",
+                              "status": "DONE"
+                            }
+                          ]
+                        }
+                        """.formatted(TITLE, ENVIRONMENT, TAG, VERSION, DESCRIPTION));
+        var checklistError = ChecklistError.CHECKLIST_ALREADY_EXISTS;
+        mockMvc.perform(request)
+                .andExpect(status().is(checklistError.getErrorCode()))
+                .andExpect(content().contentType(APPLICATION_ERROR_CHECKLIST_V_1_JSON))
+                .andExpect(jsonPath("$.title").value(checklistError.getErrorTitle()))
+                .andExpect(jsonPath("$.code").value(checklistError.getErrorCode()))
+                .andExpect(jsonPath("$.message").value(checklistError.getErrorMessage()));
     }
 
     @Test
@@ -123,7 +162,7 @@ class ChecklistManagerControllerTest {
     @Test
     void getCheckListByIdSucceeded() throws Exception {
 
-        Mockito.when(checkListManagerService.getCheckListById(UUID.fromString(ID)))
+        Mockito.when(checkListManagerService.getChecklistById(UUID.fromString(ID)))
                 .thenReturn(Optional.of(createChecklist()));
         final var request = MockMvcRequestBuilders.get(String.format("/api/v1/checklist/%s", ID));
 
@@ -141,7 +180,7 @@ class ChecklistManagerControllerTest {
     @Test
     void getCheckListByIdNotFound() throws Exception {
 
-        Mockito.when(checkListManagerService.getCheckListById(UUID.fromString(ID)))
+        Mockito.when(checkListManagerService.getChecklistById(UUID.fromString(ID)))
                 .thenReturn(Optional.empty());
         final var request = MockMvcRequestBuilders.get(String.format("/api/v1/checklist/%s", ID));
 
@@ -154,7 +193,7 @@ class ChecklistManagerControllerTest {
         final var request = MockMvcRequestBuilders.get(String.format("/api/v1/checklist/%s", "1"));
         mockMvc.perform(request)
                 .andExpect(status().is(ChecklistError.BAD_REQUEST_ERROR.getErrorCode()))
-                .andExpect(content().contentType("application/error-checklist-v1+json"));
+                .andExpect(content().contentType(APPLICATION_ERROR_CHECKLIST_V_1_JSON));
     }
 
     private static Checklist createChecklist() {
@@ -174,5 +213,27 @@ class ChecklistManagerControllerTest {
         checklist.setItems(List.of(checkListItem));
 
         return checklist;
+    }
+
+    @Test
+    void deleteCheckListByIdSucceeded() throws Exception {
+        Mockito.when(checkListManagerService.getChecklistById(UUID.fromString(ID)))
+                .thenReturn(Optional.of(createChecklist()));
+        final var request = MockMvcRequestBuilders.delete(String.format("/api/v1/checklist/%s", ID));
+
+        mockMvc.perform(request).andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteCheckListByIdNotFound() throws Exception {
+
+        Mockito.doThrow(new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND))
+                .when(checkListManagerService)
+                .deleteChecklistById(UUID.fromString(ID));
+        final var request = MockMvcRequestBuilders.delete(String.format("/api/v1/checklist/%s", ID));
+
+        mockMvc.perform(request)
+                .andExpect(status().is(ChecklistError.CHECKLIST_NOT_FOUND.getErrorCode()))
+                .andExpect(content().contentType(APPLICATION_ERROR_CHECKLIST_V_1_JSON));
     }
 }

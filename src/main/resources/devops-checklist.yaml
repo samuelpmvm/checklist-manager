@@ -104,7 +104,7 @@ paths:
       tags:
         - ChecklistManager
       summary: Get checklist by Id
-      operationId: getCheckListById
+      operationId: getChecklistById
       parameters:
         - name: id
           in: path
@@ -133,6 +133,27 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal error
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - ChecklistManager
+      summary: Delete checklist with Id
+      operationId: deleteChecklistById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the checklist that we want to delete
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Delete the checklist with id
+        '404':
+          description: Checklist with Id not found
           content:
             application/error-checklist-v1+json:
               schema:

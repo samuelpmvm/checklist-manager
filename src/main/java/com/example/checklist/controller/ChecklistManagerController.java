@@ -26,7 +26,7 @@ public class ChecklistManagerController implements ChecklistManagerApi {
 
     @Override
     public ResponseEntity<ChecklistDto> createChecklist(ChecklistDto checklistDto) throws ChecklistException {
-        var checkList = checkListManagerService.createCheckList(checklistDto);
+        var checkList = checkListManagerService.createChecklist(checklistDto);
         return ResponseEntity.ok(ChecklistMapper.toDto(checkList));
     }
 
@@ -43,10 +43,16 @@ public class ChecklistManagerController implements ChecklistManagerApi {
     }
 
     @Override
-    public ResponseEntity<ChecklistDto> getCheckListById(String id) {
-        return checkListManagerService.getCheckListById(UUID.fromString(id))
+    public ResponseEntity<ChecklistDto> getChecklistById(String id) {
+        return checkListManagerService.getChecklistById(UUID.fromString(id))
                 .map(ChecklistMapper::toDto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteChecklistById(String id) throws Exception {
+        checkListManagerService.deleteChecklistById(UUID.fromString(id));
+        return ResponseEntity.noContent().build();
     }
 }

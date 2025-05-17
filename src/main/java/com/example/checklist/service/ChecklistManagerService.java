@@ -25,7 +25,7 @@ public class ChecklistManagerService {
         this.checkListRepository = checkListRepository;
     }
 
-    public Checklist createCheckList(ChecklistDto checklistDto) throws ChecklistException {
+    public Checklist createChecklist(ChecklistDto checklistDto) throws ChecklistException {
         LOGGER.info("Creating checklist with title {} and version {}", checklistDto.getTitle(), checklistDto.getVersion());
         var checkList = ChecklistMapper.toEntity(checklistDto);
         if (checkListRepository.findByTitleAndVersion(checklistDto.getTitle(), checklistDto.getVersion()).isEmpty()) {
@@ -58,9 +58,20 @@ public class ChecklistManagerService {
         return checkListRepository.findAll();
     }
 
-    public Optional<Checklist> getCheckListById(UUID id) {
+    public Optional<Checklist> getChecklistById(UUID id) {
         LOGGER.info("Getting Checklist with id: {}", id);
         return checkListRepository.findById(id);
+    }
+
+    public void deleteChecklistById(UUID id) throws ChecklistException {
+        var checkListOpt = checkListRepository.findById(id);
+        if (checkListOpt.isPresent()) {
+            LOGGER.info("Deleting checklist with id: {}", id);
+            checkListRepository.deleteById(id);
+        } else {
+            LOGGER.error("Checklist with id {} was not found", id);
+            throw new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND);
+        }
     }
 
 }

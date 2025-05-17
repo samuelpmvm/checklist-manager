@@ -1,11 +1,11 @@
 package com.example.checklist.exception;
 
 public enum ChecklistError {
-    GENERIC_ERROR("Generic error", 100, "An unexpected error occurred"),
-    BAD_REQUEST_ERROR("Bad Request error", 101, "Bad Request error"),
+    BAD_REQUEST_ERROR("Bad Request error", 400, "Bad Request error"),
+    CHECKLIST_NOT_FOUND("Checklist not found", 401, "Checklist with id {0}"),
+    CHECKLIST_ALREADY_EXISTS("Checklist already exists", 402, "Checklist with title {0} and version {1} already exists"),
 
-    CHECKLIST_NOT_FOUND("Checklist not found", 1001, "Checklist with id {0}"),
-    CHECKLIST_ALREADY_EXISTS("Checklist already exists", 1002, "Checklist with title {0} and version {1} already exists"),
+    GENERIC_ERROR("Generic error", 500, "An unexpected error occurred"),
     ;
 
     private final String errorTitle;
