@@ -1,10 +1,12 @@
 package com.example.checklist.controller;
 
 import com.example.checklist.exception.ChecklistException;
+import com.example.checklist.mapper.ChecklistItemMapper;
 import com.example.checklist.mapper.ChecklistMapper;
 import com.example.checklist.service.ChecklistManagerService;
 import org.openapitools.api.ChecklistManagerApi;
 import org.openapitools.model.ChecklistDto;
+import org.openapitools.model.ChecklistItemDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,8 +53,20 @@ public class ChecklistManagerController implements ChecklistManagerApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteChecklistById(String id) throws Exception {
+    public ResponseEntity<Void> deleteChecklistById(String id) throws ChecklistException {
         checkListManagerService.deleteChecklistById(UUID.fromString(id));
         return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<List<ChecklistItemDto>> getChecklistItems(String id) throws ChecklistException {
+        var checklistItems = checkListManagerService.getChecklistItems(UUID.fromString(id));
+        return ResponseEntity.ok(checklistItems.stream().map(ChecklistItemMapper::toDto).toList());
+    }
+
+    @Override
+    public ResponseEntity<ChecklistItemDto> createChecklistItem(String id, ChecklistItemDto checklistItemDto) throws ChecklistException {
+        var checklistItem = checkListManagerService.createChecklistItem(UUID.fromString(id), checklistItemDto);
+        return ResponseEntity.ok(ChecklistItemMapper.toDto(checklistItem));
     }
 }

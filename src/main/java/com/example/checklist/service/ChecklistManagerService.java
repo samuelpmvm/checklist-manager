@@ -1,11 +1,15 @@
 package com.example.checklist.service;
 
 import com.example.checklist.entities.Checklist;
+import com.example.checklist.entities.ChecklistItem;
 import com.example.checklist.exception.ChecklistError;
 import com.example.checklist.exception.ChecklistException;
+import com.example.checklist.mapper.ChecklistItemMapper;
 import com.example.checklist.mapper.ChecklistMapper;
+import com.example.checklist.repository.ChecklistItemRepository;
 import com.example.checklist.repository.ChecklistRepository;
 import org.openapitools.model.ChecklistDto;
+import org.openapitools.model.ChecklistItemDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,9 +24,11 @@ public class ChecklistManagerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChecklistManagerService.class);
 
     private final ChecklistRepository checkListRepository;
+    private final ChecklistItemRepository checkListItemRepository;
 
-    public ChecklistManagerService(ChecklistRepository checkListRepository) {
+    public ChecklistManagerService(ChecklistRepository checkListRepository, ChecklistItemRepository checkListItemRepository) {
         this.checkListRepository = checkListRepository;
+        this.checkListItemRepository = checkListItemRepository;
     }
 
     public Checklist createChecklist(ChecklistDto checklistDto) throws ChecklistException {
@@ -74,4 +80,25 @@ public class ChecklistManagerService {
         }
     }
 
+    public List<ChecklistItem> getChecklistItems(UUID id) throws ChecklistException {
+        LOGGER.info("Getting checklist items for checklist with id: {}", id);
+        var checkListOpt = checkListRepository.findById(id);
+        if (checkListOpt.isPresent()) {
+            return checkListItemRepository.findChecklistItemsByChecklistId(id);
+        } else {
+            throw new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND);
+        }
+    }
+
+    public ChecklistItem createChecklistItem(UUID id, ChecklistItemDto checklistItemDto) throws ChecklistException {
+        LOGGER.info("Creating checklist item for checklist with id: {}", id);
+        var checkListOpt = checkListRepository.findById(id);
+        if (checkListOpt.isPresent()) {
+            var checklistItem = ChecklistItemMapper.toEntity(checkListOpt.get(), checklistItemDto);
+            checklistItem.setChecklist(checkListOpt.get());
+            return checkListItemRepository.save(checklistItem);
+        } else {
+            throw new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND);
+        }
+    }
 }

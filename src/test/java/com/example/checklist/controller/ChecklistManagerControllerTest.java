@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.openapitools.model.ChecklistDto;
+import org.openapitools.model.ChecklistItemDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -19,10 +20,12 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ChecklistManagerController.class)
@@ -35,7 +38,10 @@ class ChecklistManagerControllerTest {
     private static final String VERSION = "1.0.0";
     private static final String DESCRIPTION = "description";
     private static final String ID = "0d75f424-0ee4-48f8-83cd-c2067ab0c9bb";
-    public static final String APPLICATION_ERROR_CHECKLIST_V_1_JSON = "application/error-checklist-v1+json";
+    private static final String APPLICATION_ERROR_CHECKLIST_V_1_JSON = "application/error-checklist-v1+json";
+    private static final String APPLICATION_CHECKLIST_V_1_JSON = "application/checklist-v1+json";
+    private static final String APPLICATION_CHECKLIST_ITEM_REQUEST_V_1_JSON = "application/checklist-item-request-v1+json";
+    private static final String APPLICATION_CHECKLIST_ITEM_V_1_JSON = "application/checklist-item-v1+json";
 
     @MockitoBean
     private ChecklistManagerService checkListManagerService;
@@ -72,6 +78,7 @@ class ChecklistManagerControllerTest {
                         """.formatted(TITLE, ENVIRONMENT, TAG, VERSION, DESCRIPTION));
         mockMvc.perform(request)
                 .andExpect(status().isOk())
+                .andDo(print())
                 .andExpect(jsonPath("$.id").value(ID))
                 .andExpect(jsonPath("$.title").value(TITLE))
                 .andExpect(jsonPath("$.environment").value(ENVIRONMENT))
@@ -168,6 +175,7 @@ class ChecklistManagerControllerTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_CHECKLIST_V_1_JSON))
                 .andExpect(jsonPath("$.id").value(ID))
                 .andExpect(jsonPath("$.title").value(TITLE))
                 .andExpect(jsonPath("$.environment").value(ENVIRONMENT))
@@ -193,6 +201,82 @@ class ChecklistManagerControllerTest {
         final var request = MockMvcRequestBuilders.get(String.format("/api/v1/checklist/%s", "1"));
         mockMvc.perform(request)
                 .andExpect(status().is(ChecklistError.BAD_REQUEST_ERROR.getErrorCode()))
+                .andExpect(content().contentType(APPLICATION_ERROR_CHECKLIST_V_1_JSON));
+    }
+
+    @Test
+    void getChecklistItemsSucceeded() throws Exception {
+        var checkListItem = new ChecklistItem();
+        checkListItem.setId(UUID.fromString(ID));
+        checkListItem.setDescription(DESCRIPTION);
+        checkListItem.setStatus(Status.DONE);
+        checkListItem.setChecklist(createChecklist());
+        Mockito.when(checkListManagerService.getChecklistItems(UUID.fromString(ID)))
+                .thenReturn(Collections.singletonList(checkListItem));
+        final var request = MockMvcRequestBuilders.get(String.format("/api/v1/checklist/%s/items", ID));
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_CHECKLIST_ITEM_V_1_JSON))
+                .andExpect(jsonPath("$[0].id").value(ID))
+                .andExpect(jsonPath("$[0].description").value(DESCRIPTION))
+                .andExpect(jsonPath("$[0].status").value(Status.DONE.toString()));
+    }
+
+    @Test
+    void getChecklistItemsFails() throws Exception {
+        Mockito.when(checkListManagerService.getChecklistItems(UUID.fromString(ID)))
+                .thenThrow(new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND));
+        final var request = MockMvcRequestBuilders.get(String.format("/api/v1/checklist/%s/items", ID));
+
+        mockMvc.perform(request)
+                .andExpect(status().is(401))
+                .andExpect(content().contentType(APPLICATION_ERROR_CHECKLIST_V_1_JSON));
+    }
+
+    @Test
+    void createChecklistItemSucceeded() throws Exception {
+        var checkListItem = new ChecklistItem();
+        checkListItem.setId(UUID.fromString(ID));
+        checkListItem.setDescription(DESCRIPTION);
+        checkListItem.setStatus(Status.DONE);
+        checkListItem.setChecklist(createChecklist());
+        Mockito.when(checkListManagerService.createChecklistItem(ArgumentMatchers.eq(UUID.fromString(ID)), ArgumentMatchers.any(ChecklistItemDto.class)))
+                .thenReturn(checkListItem);
+        final var request = MockMvcRequestBuilders
+                .post(String.format("/api/v1/checklist/%s/items", ID))
+                .contentType(APPLICATION_CHECKLIST_ITEM_REQUEST_V_1_JSON)
+                .accept(APPLICATION_CHECKLIST_ITEM_V_1_JSON)
+                .content("""
+                        {
+                         "description": "%s",
+                         "status": "DONE"
+                        }
+                        """.formatted(DESCRIPTION));
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_CHECKLIST_ITEM_V_1_JSON))
+                .andExpect(jsonPath("$.id").value(ID))
+                .andExpect(jsonPath("$.description").value(DESCRIPTION))
+                .andExpect(jsonPath("$.status").value(Status.DONE.toString()));
+    }
+
+    @Test
+    void createChecklistItemFails() throws Exception {
+        Mockito.when(checkListManagerService.createChecklistItem(ArgumentMatchers.eq(UUID.fromString(ID)), ArgumentMatchers.any(ChecklistItemDto.class)))
+                .thenThrow(new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND));
+        final var request = MockMvcRequestBuilders
+                .post(String.format("/api/v1/checklist/%s/items", ID))
+                .contentType(APPLICATION_CHECKLIST_ITEM_REQUEST_V_1_JSON)
+                .accept(APPLICATION_CHECKLIST_ITEM_V_1_JSON)
+                .content("""
+                        {
+                         "description": "%s",
+                         "status": "DONE"
+                        }
+                        """.formatted(DESCRIPTION));
+        mockMvc.perform(request)
+                .andExpect(status().is(401))
                 .andExpect(content().contentType(APPLICATION_ERROR_CHECKLIST_V_1_JSON));
     }
 

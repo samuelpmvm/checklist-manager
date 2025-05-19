@@ -12,6 +12,7 @@ public final class ChecklistItemMapper {
 
     public static ChecklistItemDto toDto (ChecklistItem checkListItem) {
         var checklistItemDto = new ChecklistItemDto();
+        checklistItemDto.setId(String.valueOf(checkListItem.getId()));
         checklistItemDto.setDescription(checkListItem.getDescription());
         checklistItemDto.setStatus(ChecklistItemDto.StatusEnum.valueOf(checkListItem.getStatus().name()));
         return checklistItemDto;

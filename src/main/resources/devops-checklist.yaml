@@ -158,6 +158,77 @@ paths:
             application/error-checklist-v1+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /checklist/{id}/items:
+    get:
+      tags:
+        - ChecklistManager
+      summary: Get all checklist items
+      operationId: getChecklistItems
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the checklist that we want to get items from
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of checklist items
+          content:
+            application/checklist-item-v1+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChecklistItemDto'
+        '400':
+          description: Invalid UUID format
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Checklist with Id not found
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - ChecklistManager
+      summary: Create a new checklistItem
+      operationId: createChecklistItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the checklist that we want to create the new item
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/checklist-item-request-v1+json:
+            schema:
+              $ref: '#/components/schemas/ChecklistItemDto'
+      responses:
+        '201':
+          description: Checklist created successfully
+          content:
+            application/checklist-item-v1+json:
+              schema:
+                $ref: '#/components/schemas/ChecklistItemDto'
+        '204':
+          description: Checklist already exists
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Invalid checklist format
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     ChecklistDto:
@@ -195,6 +266,9 @@ components:
     ChecklistItemDto:
       type: object
       properties:
+        id:
+          type: string
+          description: Unique identifier for the checklist
         description:
             type: string
             description: Description of the checklist item
@@ -205,6 +279,9 @@ components:
     ChecklistTagDto:
       type: object
       properties:
+        id:
+          type: string
+          description: Unique identifier for the checklist
         tag:
           type: string
           description: Tag of the checklist
