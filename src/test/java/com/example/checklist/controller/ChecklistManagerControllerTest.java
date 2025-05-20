@@ -6,8 +6,11 @@ import com.example.checklist.entities.ChecklistItem;
 import com.example.checklist.exception.ChecklistError;
 import com.example.checklist.exception.ChecklistException;
 import com.example.checklist.exception.GlobalExceptionHandler;
+import com.example.checklist.jwt.JwtUtil;
 import com.example.checklist.resources.Status;
+import com.example.checklist.service.AppUserDetailsService;
 import com.example.checklist.service.ChecklistManagerService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -16,6 +19,8 @@ import org.openapitools.model.ChecklistItemDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -42,12 +47,33 @@ class ChecklistManagerControllerTest {
     private static final String APPLICATION_CHECKLIST_V_1_JSON = "application/checklist-v1+json";
     private static final String APPLICATION_CHECKLIST_ITEM_REQUEST_V_1_JSON = "application/checklist-item-request-v1+json";
     private static final String APPLICATION_CHECKLIST_ITEM_V_1_JSON = "application/checklist-item-v1+json";
+    private static final String ADMIN = "admin";
 
     @MockitoBean
     private ChecklistManagerService checkListManagerService;
 
+    @MockitoBean
+    private JwtUtil jwtUtil;
+
+    @MockitoBean
+    private AppUserDetailsService appUserDetailsService;
+
     @Autowired
     private MockMvc mockMvc;
+
+    private final String token = "mockToken";
+
+    @BeforeEach
+    void setUp() {
+        UserDetails userDetails = User
+                .withUsername(ADMIN)
+                .password(ADMIN)
+                .build();
+
+        Mockito.when(appUserDetailsService.loadUserByUsername(ADMIN)).thenReturn(userDetails);
+        Mockito.when(jwtUtil.getUserNameFromToken(token)).thenReturn(ADMIN);
+        Mockito.when(jwtUtil.validateToken(token, userDetails)).thenReturn(true);
+    }
 
     @Test
     void createChecklistSucceeded() throws Exception {
@@ -57,6 +83,7 @@ class ChecklistManagerControllerTest {
         final var request = MockMvcRequestBuilders
                 .post("/api/v1/checklist")
                 .contentType(ChecklistManagerController.APPLICATION_CHECKLIST_REQUEST_V_1_JSON)
+                .header("Authorization", "Bearer " + token)
                 .accept(ChecklistManagerController.APPLICATION_CHECKLIST_V_1_JSON)
                 .content("""
                         {
@@ -303,7 +330,9 @@ class ChecklistManagerControllerTest {
     void deleteCheckListByIdSucceeded() throws Exception {
         Mockito.when(checkListManagerService.getChecklistById(UUID.fromString(ID)))
                 .thenReturn(Optional.of(createChecklist()));
-        final var request = MockMvcRequestBuilders.delete(String.format("/api/v1/checklist/%s", ID));
+
+        final var request = MockMvcRequestBuilders.delete(String.format("/api/v1/checklist/%s", ID))
+                .header("Authorization", "Bearer " + token);
 
         mockMvc.perform(request).andExpect(status().isNoContent());
     }
