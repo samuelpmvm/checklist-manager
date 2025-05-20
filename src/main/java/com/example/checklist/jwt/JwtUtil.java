@@ -3,7 +3,6 @@ package com.example.checklist.jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +11,6 @@ import java.time.Instant;
 import java.util.Date;
 
 @Component
-@Profile({ "production" })
 public class JwtUtil {
     private final String secretKey;
     private final int expirationTime;
