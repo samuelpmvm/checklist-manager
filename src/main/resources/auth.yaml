@@ -1,0 +1,57 @@
+openapi: 3.0.3
+info:
+  title: Auth API
+  version: 1.0.0
+  description: API for authentication and token management
+
+tags:
+  - name: auth
+    description: Authentication operations
+
+paths:
+  /login:
+    post:
+      tags:
+        - auth
+      summary: User login
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/login-request-v1+json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/login-response-v1+json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Unauthorized
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    LoginResponse:
+      type: object
+      required:
+        - accessToken
+        - expiresIn
+      properties:
+        accessToken:
+          type: string
+        expiresIn:
+          type: int
+          format: int64

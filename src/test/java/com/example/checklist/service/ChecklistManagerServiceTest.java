@@ -7,13 +7,13 @@ import com.example.checklist.mapper.ChecklistItemMapper;
 import com.example.checklist.mapper.ChecklistMapper;
 import com.example.checklist.repository.ChecklistItemRepository;
 import com.example.checklist.repository.ChecklistRepository;
+import com.example.model.checklist.ChecklistDto;
+import com.example.model.checklist.ChecklistItemDto;
+import com.example.model.checklist.ChecklistTagDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.openapitools.model.ChecklistDto;
-import org.openapitools.model.ChecklistItemDto;
-import org.openapitools.model.ChecklistTagDto;
 
 import java.time.OffsetDateTime;
 import java.util.List;

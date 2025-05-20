@@ -2,7 +2,7 @@ package com.example.checklist.mapper;
 
 import com.example.checklist.entities.CheckListTag;
 import com.example.checklist.entities.Checklist;
-import org.openapitools.model.ChecklistTagDto;
+import com.example.model.checklist.ChecklistTagDto;
 
 public final class CheckListTagMapper {
     private CheckListTagMapper() {

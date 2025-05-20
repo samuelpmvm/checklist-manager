@@ -9,12 +9,12 @@ import com.example.checklist.jwt.JwtUtil;
 import com.example.checklist.resources.Status;
 import com.example.checklist.service.AppUserDetailsService;
 import com.example.checklist.service.ChecklistManagerService;
+import com.example.model.checklist.ChecklistDto;
+import com.example.model.checklist.ChecklistItemDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.openapitools.model.ChecklistDto;
-import org.openapitools.model.ChecklistItemDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -104,7 +103,6 @@ class ChecklistManagerControllerTest {
                         """.formatted(TITLE, ENVIRONMENT, TAG, VERSION, DESCRIPTION));
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andDo(print())
                 .andExpect(jsonPath("$.id").value(ID))
                 .andExpect(jsonPath("$.title").value(TITLE))
                 .andExpect(jsonPath("$.environment").value(ENVIRONMENT))

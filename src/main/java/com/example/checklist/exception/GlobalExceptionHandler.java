@@ -1,6 +1,6 @@
 package com.example.checklist.exception;
 
-import org.openapitools.model.ErrorResponse;
+import com.example.model.checklist.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;

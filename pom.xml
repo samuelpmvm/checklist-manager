@@ -185,7 +185,8 @@
 							</goals>
 							<configuration>
 								<sources>
-									<source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
+									<source>${project.build.directory}/generated-sources/devops-checklist/src/main/java</source>
+									<source>${project.build.directory}/generated-sources/auth/src/main/java</source>
 								</sources>
 							</configuration>
 						</execution>
@@ -209,26 +210,52 @@
 				<version>${openapi-generator.version}</version>
 				<executions>
 					<execution>
+						<id>generate-checklist-manager-api</id>
 						<goals>
 							<goal>generate</goal>
 						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/devops-checklist.yaml</inputSpec>
+							<generatorName>spring</generatorName>
+							<output>${project.build.directory}/generated-sources/devops-checklist</output>
+							<apiPackage>com.example.api.checklist</apiPackage>
+							<modelPackage>com.example.model.checklist</modelPackage>
+							<configOptions>
+								<serializationLibrary>jackson</serializationLibrary>
+								<openApiNullable>false</openApiNullable>
+								<interfaceOnly>true</interfaceOnly>
+								<generateSupportingFiles>false</generateSupportingFiles>
+								<unhandledException>true</unhandledException>
+								<useTags>true</useTags>
+								<serializableModel>true</serializableModel>
+								<useJakartaEe>true</useJakartaEe>
+							</configOptions>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-auth-api</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/auth.yaml</inputSpec>
+							<generatorName>spring</generatorName>
+							<output>${project.build.directory}/generated-sources/auth</output>
+							<apiPackage>com.example.api.auth</apiPackage>
+							<modelPackage>com.example.model.auth</modelPackage>
+							<configOptions>
+								<serializationLibrary>jackson</serializationLibrary>
+								<openApiNullable>false</openApiNullable>
+								<interfaceOnly>true</interfaceOnly>
+								<generateSupportingFiles>false</generateSupportingFiles>
+								<unhandledException>true</unhandledException>
+								<useTags>true</useTags>
+								<serializableModel>true</serializableModel>
+								<useJakartaEe>true</useJakartaEe>
+							</configOptions>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<inputSpec>${project.basedir}/src/main/resources/devops-checklist.yaml</inputSpec>
-					<generatorName>spring</generatorName>
-					<output>${project.build.directory}/generated-sources/openapi</output>
-					<configOptions>
-						<serializationLibrary>jackson</serializationLibrary>
-						<openApiNullable>false</openApiNullable>
-						<interfaceOnly>true</interfaceOnly>
-						<generateSupportingFiles>false</generateSupportingFiles>
-						<unhandledException>true</unhandledException>
-						<useTags>true</useTags>
-						<serializableModel>true</serializableModel>
-						<useJakartaEe>true</useJakartaEe>
-					</configOptions>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

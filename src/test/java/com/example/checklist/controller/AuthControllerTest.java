@@ -1,0 +1,50 @@
+package com.example.checklist.controller;
+
+import com.example.checklist.service.AppUserDetailsService;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+class AuthControllerTest {
+
+    private static final String USER = "user";
+    private static final String PASSWORD = "password";
+    private static final String TOKEN = "token";
+
+    @MockitoBean
+    private AppUserDetailsService appUserDetailsService;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    void loginSuccess() throws Exception {
+        Mockito.when(appUserDetailsService.loginUser(USER, PASSWORD)).thenReturn(TOKEN);
+        Mockito.when(appUserDetailsService.getExpirationTimeFrom(TOKEN)).thenReturn(Long.valueOf(10));
+        final var request = MockMvcRequestBuilders
+
+                .post("/auth/login")
+                .contentType(AuthController.APPLICATION_LOGIN_REQUEST_V1_JSON)
+                .accept(AuthController.APPLICATION_LOGIN_RESPONSE_V1_JSON)
+                .content("""
+                        {
+                          "username": "%s",
+                          "password": "%s"
+                        }
+                        """.formatted("user", "password"));
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").value(TOKEN))
+                .andExpect(jsonPath("$.expiresIn").value("10"));
+    }
+}

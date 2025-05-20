@@ -1,12 +1,12 @@
 package com.example.checklist.controller;
 
+import com.example.api.checklist.ChecklistManagerApi;
 import com.example.checklist.exception.ChecklistException;
 import com.example.checklist.mapper.ChecklistItemMapper;
 import com.example.checklist.mapper.ChecklistMapper;
 import com.example.checklist.service.ChecklistManagerService;
-import org.openapitools.api.ChecklistManagerApi;
-import org.openapitools.model.ChecklistDto;
-import org.openapitools.model.ChecklistItemDto;
+import com.example.model.checklist.ChecklistDto;
+import com.example.model.checklist.ChecklistItemDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
