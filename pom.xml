@@ -40,6 +40,7 @@
 		<liquibase.version>4.30.0</liquibase.version>
 		<openapi.version>2.8.6</openapi.version>
 		<log4j2.version>2.24.3</log4j2.version>
+		<micrometer.version>1.14.6</micrometer.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -57,6 +58,11 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
 			<version>${spring-boot.version}</version>
         </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+			<version>${spring-boot.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
@@ -121,6 +127,11 @@
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
 			<version>${liquibase.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-core</artifactId>
+			<version>${micrometer.version}</version>
 		</dependency>
 		<!-- Tests dependencies -->
 		<dependency>
