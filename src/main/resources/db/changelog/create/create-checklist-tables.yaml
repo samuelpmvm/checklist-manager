@@ -154,3 +154,15 @@ databaseChangeLog:
             columns:
               - column:
                   name: checklist_id
+  - changeSet:
+      id: create-idx-checklist-title-version
+      author: CHECKLIST
+      changes:
+        - createIndex:
+            tableName: checklist
+            indexName: idx_checklist_title_version
+            columns:
+              - column:
+                  name: title
+              - column:
+                  name: version
