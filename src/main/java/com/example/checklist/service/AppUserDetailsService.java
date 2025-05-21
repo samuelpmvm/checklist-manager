@@ -13,8 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class AppUserDetailsService  implements UserDetailsService {
 
@@ -35,7 +33,8 @@ public class AppUserDetailsService  implements UserDetailsService {
         return new User(
                 appUser.getUsername(),
                 appUser.getPassword(),
-                List.of(new SimpleGrantedAuthority(appUser.getRole().name())));
+                appUser.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.name())).toList()
+        );
     }
 
     public String loginUser(String username, String password) {

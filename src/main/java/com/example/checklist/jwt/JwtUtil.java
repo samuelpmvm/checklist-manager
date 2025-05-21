@@ -26,7 +26,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(userName)
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.ofEpochSecond(System.currentTimeMillis() / 1000 + expirationTime)))
+                .setExpiration(Date.from(Instant.ofEpochSecond(Instant.now().getEpochSecond() + expirationTime)))
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                 .compact();
     }
@@ -46,13 +46,13 @@ public class JwtUtil {
     }
 
     public long getExpirationSeconds(String token) {
-        return Jwts.parserBuilder()
+        var expirationDate = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .getExpiration()
-                .toInstant().getEpochSecond();
+                .getExpiration();
+        return expirationDate.toInstant().getEpochSecond() - Date.from(Instant.now()).toInstant().getEpochSecond();
     }
 
     private boolean isTokenExpired(String token) {

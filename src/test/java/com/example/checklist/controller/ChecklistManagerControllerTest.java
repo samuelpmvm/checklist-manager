@@ -46,6 +46,7 @@ class ChecklistManagerControllerTest {
     private static final String APPLICATION_CHECKLIST_ITEM_REQUEST_V_1_JSON = "application/checklist-item-request-v1+json";
     private static final String APPLICATION_CHECKLIST_ITEM_V_1_JSON = "application/checklist-item-v1+json";
     private static final String ADMIN = "admin";
+    private static final String TOKEN = "mockToken";
 
     @MockitoBean
     private ChecklistManagerService checkListManagerService;
@@ -59,7 +60,6 @@ class ChecklistManagerControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private final String token = "mockToken";
 
     @BeforeEach
     void setUp() {
@@ -69,8 +69,8 @@ class ChecklistManagerControllerTest {
                 .build();
 
         Mockito.when(appUserDetailsService.loadUserByUsername(ADMIN)).thenReturn(userDetails);
-        Mockito.when(jwtUtil.getUserNameFromToken(token)).thenReturn(ADMIN);
-        Mockito.when(jwtUtil.validateToken(token, userDetails)).thenReturn(true);
+        Mockito.when(jwtUtil.getUserNameFromToken(TOKEN)).thenReturn(ADMIN);
+        Mockito.when(jwtUtil.validateToken(TOKEN, userDetails)).thenReturn(true);
     }
 
     @Test
@@ -81,7 +81,7 @@ class ChecklistManagerControllerTest {
         final var request = MockMvcRequestBuilders
                 .post("/api/v1/checklist")
                 .contentType(ChecklistManagerController.APPLICATION_CHECKLIST_REQUEST_V_1_JSON)
-                .header("Authorization", "Bearer " + token)
+                .header("Authorization", "Bearer " + TOKEN)
                 .accept(ChecklistManagerController.APPLICATION_CHECKLIST_V_1_JSON)
                 .content("""
                         {
@@ -120,7 +120,7 @@ class ChecklistManagerControllerTest {
                 .createChecklist(ArgumentMatchers.any(ChecklistDto.class));
         final var request = MockMvcRequestBuilders
                 .post("/api/v1/checklist")
-                .header("Authorization", "Bearer " + token)
+                .header("Authorization", "Bearer " + TOKEN)
                 .contentType(ChecklistManagerController.APPLICATION_CHECKLIST_REQUEST_V_1_JSON)
                 .accept(ChecklistManagerController.APPLICATION_CHECKLIST_V_1_JSON)
                 .content("""
@@ -159,7 +159,7 @@ class ChecklistManagerControllerTest {
                 .put(String.format("/api/v1/checklist/%s", ID))
                 .contentType(ChecklistManagerController.APPLICATION_CHECKLIST_REQUEST_V_1_JSON)
                 .accept(ChecklistManagerController.APPLICATION_CHECKLIST_V_1_JSON)
-                .header("Authorization", "Bearer " + token);
+                .header("Authorization", "Bearer " + TOKEN);
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
@@ -180,7 +180,7 @@ class ChecklistManagerControllerTest {
         final var request = MockMvcRequestBuilders
                 .get("/api/v1/checklist")
                 .contentType(ChecklistManagerController.APPLICATION_CHECKLIST_REQUEST_V_1_JSON)
-                .header("Authorization", "Bearer " + token);
+                .header("Authorization", "Bearer " + TOKEN);
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
@@ -200,7 +200,7 @@ class ChecklistManagerControllerTest {
                 .thenReturn(Optional.of(createChecklist()));
         final var request = MockMvcRequestBuilders
                 .get(String.format("/api/v1/checklist/%s", ID))
-                .header("Authorization", "Bearer " + token);
+                .header("Authorization", "Bearer " + TOKEN);
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
@@ -221,7 +221,7 @@ class ChecklistManagerControllerTest {
                 .thenReturn(Optional.empty());
         final var request = MockMvcRequestBuilders
                 .get(String.format("/api/v1/checklist/%s", ID))
-                .header("Authorization", "Bearer " + token);
+                .header("Authorization", "Bearer " + TOKEN);
 
         mockMvc.perform(request)
                 .andExpect(status().isNotFound());
@@ -231,7 +231,7 @@ class ChecklistManagerControllerTest {
     void getCheckListByIdBadRequest() throws Exception {
         final var request = MockMvcRequestBuilders
                 .get(String.format("/api/v1/checklist/%s", "1"))
-                .header("Authorization", "Bearer " + token);
+                .header("Authorization", "Bearer " + TOKEN);
         mockMvc.perform(request)
                 .andExpect(status().is(ChecklistError.BAD_REQUEST_ERROR.getErrorCode()))
                 .andExpect(content().contentType(APPLICATION_ERROR_CHECKLIST_V_1_JSON));
@@ -248,7 +248,7 @@ class ChecklistManagerControllerTest {
                 .thenReturn(Collections.singletonList(checkListItem));
         final var request = MockMvcRequestBuilders
                 .get(String.format("/api/v1/checklist/%s/items", ID))
-                .header("Authorization", "Bearer " + token);
+                .header("Authorization", "Bearer " + TOKEN);
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
@@ -264,7 +264,7 @@ class ChecklistManagerControllerTest {
                 .thenThrow(new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND));
         final var request = MockMvcRequestBuilders
                 .get(String.format("/api/v1/checklist/%s/items", ID))
-                .header("Authorization", "Bearer " + token);
+                .header("Authorization", "Bearer " + TOKEN);
 
         mockMvc.perform(request)
                 .andExpect(status().is(401))
@@ -284,7 +284,7 @@ class ChecklistManagerControllerTest {
                 .post(String.format("/api/v1/checklist/%s/items", ID))
                 .contentType(APPLICATION_CHECKLIST_ITEM_REQUEST_V_1_JSON)
                 .accept(APPLICATION_CHECKLIST_ITEM_V_1_JSON)
-                .header("Authorization", "Bearer " + token)
+                .header("Authorization", "Bearer " + TOKEN)
                 .content("""
                         {
                          "description": "%s",
@@ -307,7 +307,7 @@ class ChecklistManagerControllerTest {
                 .post(String.format("/api/v1/checklist/%s/items", ID))
                 .contentType(APPLICATION_CHECKLIST_ITEM_REQUEST_V_1_JSON)
                 .accept(APPLICATION_CHECKLIST_ITEM_V_1_JSON)
-                .header("Authorization", "Bearer " + token)
+                .header("Authorization", "Bearer " + TOKEN)
                 .content("""
                         {
                          "description": "%s",
@@ -344,7 +344,7 @@ class ChecklistManagerControllerTest {
                 .thenReturn(Optional.of(createChecklist()));
 
         final var request = MockMvcRequestBuilders.delete(String.format("/api/v1/checklist/%s", ID))
-                .header("Authorization", "Bearer " + token);
+                .header("Authorization", "Bearer " + TOKEN);
 
         mockMvc.perform(request).andExpect(status().isNoContent());
     }
@@ -357,7 +357,7 @@ class ChecklistManagerControllerTest {
                 .deleteChecklistById(UUID.fromString(ID));
         final var request = MockMvcRequestBuilders
                 .delete(String.format("/api/v1/checklist/%s", ID))
-                .header("Authorization", "Bearer " + token);
+                .header("Authorization", "Bearer " + TOKEN);
 
         mockMvc.perform(request)
                 .andExpect(status().is(ChecklistError.CHECKLIST_NOT_FOUND.getErrorCode()))

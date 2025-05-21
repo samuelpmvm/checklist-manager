@@ -30,7 +30,21 @@ paths:
                 $ref: '#/components/schemas/LoginResponse'
         '401':
           description: Unauthorized
-
+  /me:
+    get:
+      tags:
+        - auth
+      summary: Get user information
+      operationId: getUserInfo
+      responses:
+        '200':
+          description: User information retrieved successfully
+          content:
+            application/userinfo-response-v1+json:
+              schema:
+                $ref: '#/components/schemas/UserInfoResponse'
+        '401':
+          description: Unauthorized
 components:
   schemas:
     LoginRequest:
@@ -53,5 +67,12 @@ components:
         accessToken:
           type: string
         expiresIn:
-          type: int
+          type: integer
           format: int64
+    UserInfoResponse:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
