@@ -45,6 +45,27 @@ paths:
                 $ref: '#/components/schemas/UserInfoResponse'
         '401':
           description: Unauthorized
+  /register:
+    post:
+      tags:
+        - auth
+      summary: Register user
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/userinfo-request-v1+json:
+            schema:
+              $ref: '#/components/schemas/UserInfoRequest'
+      responses:
+        '201':
+          description: User register successfully
+          content:
+            application/userinfo-response-v1+json:
+              schema:
+                $ref: '#/components/schemas/UserInfoResponse'
+        '401':
+          description: Unauthorized
 components:
   schemas:
     LoginRequest:
@@ -69,6 +90,23 @@ components:
         expiresIn:
           type: integer
           format: int64
+    UserInfoRequest:
+      type: object
+      required:
+        - username
+        - password
+        - roles
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        roles:
+          description: Roles of the user
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/RoleDto'
     UserInfoResponse:
       type: object
       required:
@@ -76,3 +114,11 @@ components:
       properties:
         username:
           type: string
+        roles:
+          description: Roles of the user
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/RoleDto'
+    RoleDto:
+      enum: [ ADMIN, USER, GUEST ]

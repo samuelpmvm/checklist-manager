@@ -28,8 +28,8 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: role
-                  type: VARCHAR(50)
+                  name: roles
+                  type: JSON
                   constraints:
                     nullable: false
   - changeSet:
@@ -51,7 +51,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  valueComputed: "uuid_generate_v4()"
+                  valueComputed: "gen_random_uuid()"
               - column:
                   name: username
                   value: admin
@@ -60,4 +60,4 @@ databaseChangeLog:
                   value: admin
               - column:
                   name: role
-                  value: ADMIN
+                  value: '["ADMIN"]'

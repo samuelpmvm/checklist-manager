@@ -3,6 +3,7 @@ package com.example.checklist.entities;
 import com.example.checklist.resources.Role;
 import jakarta.persistence.*;
 
+import java.util.Collections;
 import java.util.Set;
 
 @Entity
@@ -19,6 +20,12 @@ public class AppUser {
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
+
+    public AppUser(String username, String password, Set<Role> roles) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
 
     public Long getId() {
         return id;
@@ -45,7 +52,7 @@ public class AppUser {
     }
 
     public Set<Role> getRoles() {
-        return roles;
+        return Collections.unmodifiableSet(roles);
     }
 
     public void setRoles(Set<Role> roles) {

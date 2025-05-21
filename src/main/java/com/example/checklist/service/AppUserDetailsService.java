@@ -1,7 +1,9 @@
 package com.example.checklist.service;
 
+import com.example.checklist.entities.AppUser;
 import com.example.checklist.jwt.JwtUtil;
 import com.example.checklist.repository.UserRepository;
+import com.example.checklist.resources.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -12,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 public class AppUserDetailsService  implements UserDetailsService {
@@ -51,5 +55,10 @@ public class AppUserDetailsService  implements UserDetailsService {
     public Long getExpirationTimeFrom(String token) {
         LOGGER.info("Getting expiration time from token");
         return jwtUtil.getExpirationSeconds(token);
+    }
+
+    public AppUser registerUser(String username, String password, Set<Role> roles) {
+        var appUser = new AppUser(username, passwordEncoder.encode(password), roles);
+        return userRepository.save(appUser);
     }
 }
