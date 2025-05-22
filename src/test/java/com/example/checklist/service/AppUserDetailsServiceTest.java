@@ -1,9 +1,10 @@
 package com.example.checklist.service;
 
 import com.example.checklist.entities.AppUser;
+import com.example.checklist.entities.UserRoles;
 import com.example.checklist.jwt.JwtUtil;
 import com.example.checklist.repository.UserRepository;
-import com.example.checklist.resources.Role;
+import com.example.model.auth.RoleDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -39,14 +40,16 @@ class AppUserDetailsServiceTest {
 
     @Test
     void testLoadUserByUsernameSuccess() {
-        var appUser = new AppUser(ADMIN, ADMIN, Set.of(Role.ADMIN));
+        var appUser = new AppUser(ADMIN, ADMIN, Set.of(new UserRoles(RoleDto.ADMIN)));
         Mockito.when(userRepository.findByUsername(ADMIN)).thenReturn(Optional.of(appUser));
         var userDetails = appUserDetailsService.loadUserByUsername(ADMIN);
 
         assertEquals(ADMIN, userDetails.getUsername());
         assertEquals(ADMIN, userDetails.getPassword());
         assertEquals(1, userDetails.getAuthorities().size());
-        assertTrue(userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(Role.ADMIN.name())));
+        assertTrue(userDetails.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals(RoleDto.ADMIN.name())));
     }
 
     @Test
@@ -57,9 +60,9 @@ class AppUserDetailsServiceTest {
 
     @Test
     void testLoginUserSuccess() {
-        var appUser = new AppUser(ADMIN, ADMIN, Set.of(Role.ADMIN));
+        var appUser = new AppUser(ADMIN, ADMIN, Set.of(new UserRoles(RoleDto.ADMIN)));
         Mockito.when(userRepository.findByUsername(ADMIN)).thenReturn(Optional.of(appUser));
-        Mockito.when(passwordEncoder.encode(ADMIN)).thenReturn(ADMIN);
+        Mockito.when(passwordEncoder.matches(ADMIN, ADMIN)).thenReturn(true);
         Mockito.when(jwtUtil.generateToken(ADMIN, appUser.getRoles())).thenReturn(ADMIN);
 
         var token = appUserDetailsService.loginUser(ADMIN, ADMIN);
@@ -75,9 +78,10 @@ class AppUserDetailsServiceTest {
 
     @Test
     void testLoginUserFailsBadCredentials() {
-        var appUser = new AppUser(ADMIN, ADMIN, Set.of(Role.ADMIN));
+        var userRoles =  Set.of(new UserRoles(RoleDto.USER));
+        var appUser = new AppUser(ADMIN, ADMIN, userRoles);
         Mockito.when(userRepository.findByUsername(ADMIN)).thenReturn(Optional.of(appUser));
-        Mockito.when(passwordEncoder.encode(ADMIN)).thenReturn("Bad password");
+        Mockito.when(passwordEncoder.matches(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(false);
         assertThrows(BadCredentialsException.class, () -> appUserDetailsService.loginUser(ADMIN, ADMIN));
     }
 
@@ -90,11 +94,13 @@ class AppUserDetailsServiceTest {
 
     @Test
     void testRegisterUser() {
-        var appUser = new AppUser(ADMIN, ADMIN, Set.of(Role.ADMIN));
+        var userRoles =  Set.of(new UserRoles(RoleDto.USER));
+        var appUser = new AppUser(ADMIN, ADMIN, userRoles);
         Mockito.when(userRepository.save(ArgumentMatchers.any(AppUser.class))).thenReturn(appUser);
         Mockito.when(passwordEncoder.encode(ADMIN)).thenReturn(ADMIN);
 
-        var registeredUser = appUserDetailsService.registerUser(ADMIN, ADMIN, Set.of(Role.ADMIN));
+
+        var registeredUser = appUserDetailsService.registerUser(ADMIN, ADMIN,userRoles);
 
         assertEquals(appUser.getUsername(), registeredUser.getUsername());
         assertEquals(appUser.getPassword(), registeredUser.getPassword());

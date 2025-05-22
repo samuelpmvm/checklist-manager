@@ -94,56 +94,6 @@ databaseChangeLog:
             referencedColumnNames: id
             constraintName: fk_checklist_item_checklist
             onDelete: CASCADE
-
-  - changeSet:
-      id: create-checklist-tag-table
-      author: SMarcos
-      preConditions:
-        - onFail: MARK_RAN
-          not:
-            tableExists:
-              tableName: checklist_tag
-      changes:
-        - createTable:
-            tableName: checklist_tag
-            columns:
-              - column:
-                  name: id
-                  type: UUID
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: tag
-                  type: VARCHAR(255)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: checklist_id
-                  type: UUID
-                  constraints:
-                    nullable: false
-  - changeSet:
-      id: create-foreign-key-constraint-checklist-tag
-      author: SMarcos
-      changes:
-        - addForeignKeyConstraint:
-            baseTableName: checklist_tag
-            baseColumnNames: checklist_id
-            referencedTableName: checklist
-            referencedColumnNames: id
-            constraintName: fk_checklist_item_checklist
-            onDelete: CASCADE
-  - changeSet:
-      id: create-idx-checklist-tag
-      author: SMarcos
-      changes:
-        - createIndex:
-            tableName: checklist_tag
-            indexName: idx-checklist-tag
-            columns:
-              - column:
-                  name: checklist_id
   - changeSet:
       id: create-idx-checklist-item
       author: SMarcos

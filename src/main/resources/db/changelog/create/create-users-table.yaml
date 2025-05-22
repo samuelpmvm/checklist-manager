@@ -60,13 +60,18 @@ databaseChangeLog:
                   type: VARCHAR(50)
                   constraints:
                     nullable: false
+              - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    nullable: false
   - changeSet:
       id: create-foreign-key-constraint-user-roles
       author: SMarcos
       changes:
         - addForeignKeyConstraint:
             baseTableName: user_roles
-            baseColumnNames: users_id
+            baseColumnNames: user_id
             referencedTableName: users
             referencedColumnNames: id
             constraintName: fk_user_roles_users
@@ -80,13 +85,22 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  valueComputed: "gen_random_uuid()"
+                  value: '068ea258-9bb7-4420-b4ff-6c2a61b32549'
               - column:
                   name: username
-                  value: admin
+                  value: "admin"
               - column:
                   name: password
-                  value: admin
+                  value: "$2a$10$8osZb8NsL52RGwE8ujVhE.49v.2IGg8HAPflX2xYp9uJFZS8DOkEK"
+        - insert:
+            tableName: user_roles
+            columns:
               - column:
-                  name: userRoles
-                  value: '["ADMIN"]'
+                  name: id
+                  value: 'e3435d94-e4f1-4da6-8bf0-b303e9691066'
+              - column:
+                  name: role
+                  value: "ADMIN"
+              - column:
+                  name: user_id
+                  value: '068ea258-9bb7-4420-b4ff-6c2a61b32549'

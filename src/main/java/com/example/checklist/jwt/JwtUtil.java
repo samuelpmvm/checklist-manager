@@ -1,6 +1,6 @@
 package com.example.checklist.jwt;
 
-import com.example.checklist.resources.Role;
+import com.example.checklist.entities.UserRoles;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,10 +25,10 @@ public class JwtUtil {
         this.expirationTime = expirationTime;
     }
 
-    public String generateToken(String userName, Set<Role> roles) {
+    public String generateToken(String userName, Set<UserRoles> roles) {
         return Jwts.builder()
                 .setSubject(userName)
-                .claim("roles", roles.stream().map(Enum::name).toList())
+                .claim("roles", roles.stream().map(userRoles -> userRoles.getRole().getValue()).toList())
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(Instant.ofEpochSecond(Instant.now().getEpochSecond() + expirationTime)))
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))

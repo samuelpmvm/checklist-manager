@@ -3,6 +3,7 @@ package com.example.checklist.entities;
 import jakarta.persistence.*;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -10,26 +11,30 @@ public class AppUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     private String username;
 
     private String password;
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRoles> roles;
 
-    public AppUser(String username, Set<UserRoles> roles, String password) {
-        this.username = username;
-        this.roles = roles;
-        this.password = password;
+    public AppUser() {
+        // Default constructor
     }
 
-    public Long getId() {
+    public AppUser(String username, String password, Set<UserRoles> roles) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

@@ -1,11 +1,12 @@
 package com.example.checklist.controller;
 
 import com.example.checklist.entities.AppUser;
+import com.example.checklist.entities.UserRoles;
 import com.example.checklist.jwt.JwtUtil;
-import com.example.checklist.resources.Role;
 import com.example.checklist.service.AppUserDetailsService;
 import com.example.model.auth.RoleDto;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,8 +17,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -82,15 +83,16 @@ class AuthControllerTest {
 
     @Test
     void registerUserSuccess() throws Exception {
-        var appUser = new AppUser(USER, PASSWORD, Collections.singleton(Role.USER));
-        Mockito.when(appUserDetailsService.registerUser(USER, PASSWORD, Collections.singleton(Role.USER))).thenReturn(appUser);
+        var userRoles =  Set.of(new UserRoles(RoleDto.USER));
+        var appUser = new AppUser(USER, PASSWORD, userRoles);
+
+        var userDetails = User.withUsername(ADMIN).password(ADMIN).roles(RoleDto.ADMIN.name()).build();
+        Mockito.when(jwtUtil.validateToken(TOKEN, userDetails)).thenReturn(true);
+        Mockito.when(jwtUtil.getRoleNamesFromToken(TOKEN)).thenReturn(List.of(RoleDto.ADMIN.name()));
         Mockito.when(jwtUtil.getUserNameFromToken(TOKEN)).thenReturn(ADMIN);
 
-        var userDetails = User.withUsername(ADMIN).password(ADMIN).roles(Role.USER.name()).build();
-        Mockito.when(jwtUtil.validateToken(TOKEN, userDetails)).thenReturn(true);
-        Mockito.when(jwtUtil.getRoleNamesFromToken(TOKEN)).thenReturn(List.of(Role.ADMIN.name()));
-
         Mockito.when(appUserDetailsService.loadUserByUsername(ADMIN)).thenReturn(userDetails);
+        Mockito.when(appUserDetailsService.registerUser(ArgumentMatchers.eq(USER), ArgumentMatchers.eq(PASSWORD), ArgumentMatchers.anySet())).thenReturn(appUser);
         final var request = MockMvcRequestBuilders
                 .post("/auth/register")
                 .header("Authorization", "Bearer " + TOKEN)
@@ -111,13 +113,14 @@ class AuthControllerTest {
 
     @Test
     void registerUserWithoutRoleAdminFails() throws Exception {
-        var appUser = new AppUser(USER, PASSWORD, Collections.singleton(Role.USER));
-        Mockito.when(appUserDetailsService.registerUser(USER, PASSWORD, Collections.singleton(Role.USER))).thenReturn(appUser);
+        var userRoles =  Set.of(new UserRoles(RoleDto.USER));
+        var appUser = new AppUser(USER, PASSWORD, userRoles);
+        Mockito.when(appUserDetailsService.registerUser(USER, PASSWORD, userRoles)).thenReturn(appUser);
         Mockito.when(jwtUtil.getUserNameFromToken(TOKEN)).thenReturn(ADMIN);
 
-        var userDetails = User.withUsername(ADMIN).password(ADMIN).roles(Role.USER.name()).build();
+        var userDetails = User.withUsername(ADMIN).password(ADMIN).roles(RoleDto.USER.name()).build();
         Mockito.when(jwtUtil.validateToken(TOKEN, userDetails)).thenReturn(true);
-        Mockito.when(jwtUtil.getRoleNamesFromToken(TOKEN)).thenReturn(List.of(Role.USER.name()));
+        Mockito.when(jwtUtil.getRoleNamesFromToken(TOKEN)).thenReturn(List.of(RoleDto.USER.name()));
 
         Mockito.when(appUserDetailsService.loadUserByUsername(ADMIN)).thenReturn(userDetails);
         final var request = MockMvcRequestBuilders

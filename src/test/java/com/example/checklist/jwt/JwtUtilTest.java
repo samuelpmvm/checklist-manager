@@ -1,10 +1,11 @@
 package com.example.checklist.jwt;
 
-import com.example.checklist.resources.Role;
+import com.example.checklist.entities.UserRoles;
+import com.example.model.auth.RoleDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.User;
 
-import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -19,8 +20,8 @@ class JwtUtilTest {
 
     @Test
     void testGenerateAndValidateToken() {
-        var roles = Collections.singleton(Role.ADMIN);
-        var token = jwtUtil.generateToken(ADMIN, roles);
+        var userRoles =  Set.of(new UserRoles(RoleDto.ADMIN));
+        var token = jwtUtil.generateToken(ADMIN, userRoles);
         assertNotNull(token);
 
         var userDetails = User.withUsername(ADMIN)

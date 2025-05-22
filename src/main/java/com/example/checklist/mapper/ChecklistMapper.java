@@ -28,9 +28,13 @@ public final class ChecklistMapper {
         checklist.setEnvironment(checklistDto.getEnvironment());
         checklist.setVersion(checklistDto.getVersion());
         checklist.setTitle(checklistDto.getTitle());
-        var checkListItem = checklistDto.getItems().stream().map(checklistItemDto -> ChecklistItemMapper.toEntity(checklist, checklistItemDto)).toList();
+        var checkListItem = checklistDto
+                .getItems()
+                .stream()
+                .map(checklistItemDto -> ChecklistItemMapper.toEntity(checklist, checklistItemDto))
+                .toList();
         checklist.setItems(checkListItem);
-        var checkListTag = checklistDto.getTags().stream().map(checklistItemDto -> CheckListTagMapper.toEntity(checklist, checklistItemDto)).toList();
+        var checkListTag = checklistDto.getTags().stream().map(CheckListTagMapper::toEntity).toList();
         checklist.setTags(checkListTag);
 
         return checklist;

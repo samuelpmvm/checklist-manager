@@ -12,14 +12,18 @@ public class Checklist {
     @Id
     @GeneratedValue
     private UUID id;
+
     private String title;
     private String version;
     private String environment;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+
     @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChecklistItem> items;
-    @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "checklist_tag", joinColumns = @JoinColumn(name = "checklist_id"))
     private List<CheckListTag> tags;
 
     public Checklist() {

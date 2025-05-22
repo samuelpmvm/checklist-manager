@@ -11,9 +11,12 @@ public class ChecklistItem {
     @Id
     @GeneratedValue
     private UUID id;
+
     private String description;
+
     @Enumerated(EnumType.STRING)
     private Status status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "checklist_id")
     private Checklist checklist;

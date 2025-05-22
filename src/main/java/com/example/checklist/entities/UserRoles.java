@@ -1,6 +1,6 @@
 package com.example.checklist.entities;
 
-import com.example.checklist.resources.Role;
+import com.example.model.auth.RoleDto;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -13,9 +13,33 @@ public class UserRoles {
     private UUID id;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private RoleDto role;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private AppUser appUser;
+
+    public UserRoles() {
+        // Default constructor
+    }
+
+    public UserRoles(RoleDto role) {
+        this.role = role;
+    }
+
+    public RoleDto getRole() {
+        return role;
+    }
+
+    public void setRole(RoleDto role) {
+        this.role = role;
+    }
+
+    public AppUser getAppUser() {
+        return appUser;
+    }
+
+    public void setAppUser(AppUser appUser) {
+        this.appUser = appUser;
+    }
 }
