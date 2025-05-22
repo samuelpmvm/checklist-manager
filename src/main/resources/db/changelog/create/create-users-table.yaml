@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: create-users-table
-      author: CHECKLIST
+      author: SMarcos
       preConditions:
         - onFail: MARK_RAN
           not:
@@ -27,14 +27,9 @@ databaseChangeLog:
                   type: VARCHAR(255)
                   constraints:
                     nullable: false
-              - column:
-                  name: roles
-                  type: JSON
-                  constraints:
-                    nullable: false
   - changeSet:
       id: create-idx-users-username
-      author: CHECKLIST
+      author: SMarcos
       changes:
         - createIndex:
             tableName: users
@@ -43,8 +38,42 @@ databaseChangeLog:
               - column:
                   name: username
   - changeSet:
+      id: create-user-roles-table
+      author: SMarcos
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: user_roles
+      changes:
+        - createTable:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create-foreign-key-constraint-user-roles
+      author: SMarcos
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: user_roles
+            baseColumnNames: users_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_roles_users
+            onDelete: CASCADE
+  - changeSet:
       id: insert-admin-user
-      author: CHECKLIST
+      author: SMarcos
       changes:
         - insert:
             tableName: users
@@ -59,5 +88,5 @@ databaseChangeLog:
                   name: password
                   value: admin
               - column:
-                  name: role
+                  name: userRoles
                   value: '["ADMIN"]'

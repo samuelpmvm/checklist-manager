@@ -1,12 +1,11 @@
 package com.example.checklist.entities;
 
-import com.example.checklist.resources.Role;
 import jakarta.persistence.*;
 
-import java.util.Collections;
 import java.util.Set;
 
 @Entity
+@Table(name = "users")
 public class AppUser {
 
     @Id
@@ -17,14 +16,13 @@ public class AppUser {
 
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    private Set<Role> roles;
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserRoles> roles;
 
-    public AppUser(String username, String password, Set<Role> roles) {
+    public AppUser(String username, Set<UserRoles> roles, String password) {
         this.username = username;
-        this.password = password;
         this.roles = roles;
+        this.password = password;
     }
 
     public Long getId() {
@@ -51,11 +49,11 @@ public class AppUser {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
-        return Collections.unmodifiableSet(roles);
+    public Set<UserRoles> getRoles() {
+        return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(Set<UserRoles> roles) {
         this.roles = roles;
     }
 }

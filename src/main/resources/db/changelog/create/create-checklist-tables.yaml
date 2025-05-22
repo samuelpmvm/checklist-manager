@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: create-checklist-table
-      author: CHECKLIST
+      author: SMarcos
       preConditions:
         - onFail: MARK_RAN
           not:
@@ -44,7 +44,7 @@ databaseChangeLog:
                     nullable: false
   - changeSet:
       id: create_unique_constraint-checklist-table
-      author: CHECKLIST
+      author: SMarcos
       changes:
         - addUniqueConstraint:
             tableName: checklist
@@ -52,7 +52,7 @@ databaseChangeLog:
             constraintName: uc_checklist_title_version
   - changeSet:
       id: create-checklist-item-table
-      author: CHECKLIST
+      author: SMarcos
       preConditions:
         - onFail: MARK_RAN
           not:
@@ -85,7 +85,7 @@ databaseChangeLog:
                         nullable: false
   - changeSet:
       id: create-foreign-key-constraint-checklist-item
-      author: CHECKLIST
+      author: SMarcos
       changes:
         - addForeignKeyConstraint:
             baseTableName: checklist_item
@@ -97,7 +97,7 @@ databaseChangeLog:
 
   - changeSet:
       id: create-checklist-tag-table
-      author: CHECKLIST
+      author: SMarcos
       preConditions:
         - onFail: MARK_RAN
           not:
@@ -125,7 +125,7 @@ databaseChangeLog:
                     nullable: false
   - changeSet:
       id: create-foreign-key-constraint-checklist-tag
-      author: CHECKLIST
+      author: SMarcos
       changes:
         - addForeignKeyConstraint:
             baseTableName: checklist_tag
@@ -136,7 +136,7 @@ databaseChangeLog:
             onDelete: CASCADE
   - changeSet:
       id: create-idx-checklist-tag
-      author: CHECKLIST
+      author: SMarcos
       changes:
         - createIndex:
             tableName: checklist_tag
@@ -146,7 +146,7 @@ databaseChangeLog:
                   name: checklist_id
   - changeSet:
       id: create-idx-checklist-item
-      author: CHECKLIST
+      author: SMarcos
       changes:
         - createIndex:
             tableName: checklist_item
@@ -156,7 +156,7 @@ databaseChangeLog:
                   name: checklist_id
   - changeSet:
       id: create-idx-checklist-title-version
-      author: CHECKLIST
+      author: SMarcos
       changes:
         - createIndex:
             tableName: checklist
