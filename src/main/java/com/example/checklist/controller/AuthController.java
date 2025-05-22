@@ -21,6 +21,7 @@ public class AuthController implements AuthApi {
     private final AppUserDetailsService appUserDetailsService;
     static final String APPLICATION_LOGIN_RESPONSE_V1_JSON = "application/login-response-v1+json";
     static final String APPLICATION_LOGIN_REQUEST_V1_JSON = "application/login-request-v1+json";
+    static final String APPLICATION_USERINFO_REQUEST_V1_JSON = "application/userinfo-request-v1+json";
     static final String APPLICATION_USERINFO_RESPONSE_V1_JSON = "application/userinfo-response-v1+json";
 
     public AuthController(AppUserDetailsService appUserDetailsService) {

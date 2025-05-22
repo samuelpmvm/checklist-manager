@@ -69,7 +69,7 @@ class ChecklistManagerServiceTest {
         Mockito.when(checklistRepository.findByTitleAndVersion(checklistDto.getTitle(), checklistDto.getVersion()))
                 .thenReturn(Optional.of(ChecklistMapper.toEntity(checklistDto)));
         var checkListException = assertThrows(ChecklistException.class, () -> checklistManagerService.createChecklist(checklistDto));
-        assertEquals(402, checkListException.getChecklistError().getErrorCode());
+        assertEquals(2001, checkListException.getChecklistError().getErrorCode());
     }
 
     @Test
@@ -93,7 +93,7 @@ class ChecklistManagerServiceTest {
         Mockito.when(checklistRepository.findById(CHECKLIST_ID))
                 .thenReturn(Optional.empty());
         var checkListException = assertThrows(ChecklistException.class, () -> checklistManagerService.updateChecklist(CHECKLIST_ID));
-        assertEquals(401, checkListException.getChecklistError().getErrorCode());
+        assertEquals(2000, checkListException.getChecklistError().getErrorCode());
     }
 
     @Test
@@ -148,7 +148,7 @@ class ChecklistManagerServiceTest {
         Mockito.when(checklistRepository.findById(CHECKLIST_ID)).thenReturn(Optional.empty());
 
         var checklistException = assertThrows(ChecklistException.class, () -> checklistManagerService.getChecklistItems(CHECKLIST_ID));
-        assertEquals(401, checklistException.getChecklistError().getErrorCode());
+        assertEquals(2000, checklistException.getChecklistError().getErrorCode());
         Mockito.verify(checklistRepository, Mockito.times(1)).findById(CHECKLIST_ID);
         Mockito.verify(checklistItemRepository, Mockito.never()).findChecklistItemsByChecklistId(CHECKLIST_ID);
     }
@@ -170,7 +170,7 @@ class ChecklistManagerServiceTest {
         Mockito.when(checklistRepository.findById(CHECKLIST_ID)).thenReturn(Optional.empty());
 
         var checklistException = assertThrows(ChecklistException.class, () -> checklistManagerService.createChecklistItem(CHECKLIST_ID, new ChecklistItemDto()));
-        assertEquals(401, checklistException.getChecklistError().getErrorCode());
+        assertEquals(2000, checklistException.getChecklistError().getErrorCode());
         Mockito.verify(checklistRepository, Mockito.times(1)).findById(CHECKLIST_ID);
         Mockito.verify(checklistItemRepository, Mockito.never()).save(ArgumentMatchers.any(ChecklistItem.class));
     }

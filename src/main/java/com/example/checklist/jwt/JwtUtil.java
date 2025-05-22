@@ -1,5 +1,6 @@
 package com.example.checklist.jwt;
 
+import com.example.checklist.resources.Role;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class JwtUtil {
@@ -22,9 +25,10 @@ public class JwtUtil {
         this.expirationTime = expirationTime;
     }
 
-    public String generateToken(String userName) {
+    public String generateToken(String userName, Set<Role> roles) {
         return Jwts.builder()
                 .setSubject(userName)
+                .claim("roles", roles.stream().map(Enum::name).toList())
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(Instant.ofEpochSecond(Instant.now().getEpochSecond() + expirationTime)))
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
@@ -38,6 +42,14 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    public List<String> getRoleNamesFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+                .build()
+                .parseClaimsJws(token)
+                .getBody().get("roles", List.class);
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {

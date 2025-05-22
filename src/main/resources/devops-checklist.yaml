@@ -44,7 +44,7 @@ paths:
             application/checklist-v1+json:
               schema:
                 $ref: '#/components/schemas/ChecklistDto'
-        '204':
+        '409':
           description: Checklist already exists
           content:
             application/error-checklist-v1+json:
@@ -217,7 +217,7 @@ paths:
             application/checklist-item-v1+json:
               schema:
                 $ref: '#/components/schemas/ChecklistItemDto'
-        '204':
+        '409':
           description: Checklist already exists
           content:
             application/error-checklist-v1+json:

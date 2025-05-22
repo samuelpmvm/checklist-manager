@@ -20,6 +20,8 @@ public class ChecklistManagerController implements ChecklistManagerApi {
 
     static final String APPLICATION_CHECKLIST_REQUEST_V_1_JSON= "application/checklist-request-v1+json";
     static final String APPLICATION_CHECKLIST_V_1_JSON= "application/checklist-v1+json";
+    static final String APPLICATION_CHECKLIST_ITEM_REQUEST_V_1_JSON = "application/checklist-item-request-v1+json";
+    static final String APPLICATION_CHECKLIST_ITEM_V_1_JSON = "application/checklist-item-v1+json";
     private final ChecklistManagerService checkListManagerService;
 
     public ChecklistManagerController(ChecklistManagerService checkListManagerService) {

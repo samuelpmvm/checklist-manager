@@ -49,7 +49,7 @@ public class AppUserDetailsService  implements UserDetailsService {
             throw new BadCredentialsException(String.format("Password %s is invalid for user %s", password, username));
         }
         LOGGER.info("Generating toker for user {}", username);
-        return jwtUtil.generateToken(username);
+        return jwtUtil.generateToken(username, appUser.getRoles());
         }
 
     public Long getExpirationTimeFrom(String token) {

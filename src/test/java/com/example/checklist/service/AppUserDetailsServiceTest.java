@@ -60,7 +60,7 @@ class AppUserDetailsServiceTest {
         var appUser = new AppUser(ADMIN, ADMIN, Set.of(Role.ADMIN));
         Mockito.when(userRepository.findByUsername(ADMIN)).thenReturn(Optional.of(appUser));
         Mockito.when(passwordEncoder.encode(ADMIN)).thenReturn(ADMIN);
-        Mockito.when(jwtUtil.generateToken(ADMIN)).thenReturn(ADMIN);
+        Mockito.when(jwtUtil.generateToken(ADMIN, appUser.getRoles())).thenReturn(ADMIN);
 
         var token = appUserDetailsService.loginUser(ADMIN, ADMIN);
 

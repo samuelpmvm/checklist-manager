@@ -42,9 +42,6 @@ class ChecklistManagerControllerTest {
     private static final String DESCRIPTION = "description";
     private static final String ID = "0d75f424-0ee4-48f8-83cd-c2067ab0c9bb";
     private static final String APPLICATION_ERROR_CHECKLIST_V_1_JSON = "application/error-checklist-v1+json";
-    private static final String APPLICATION_CHECKLIST_V_1_JSON = "application/checklist-v1+json";
-    private static final String APPLICATION_CHECKLIST_ITEM_REQUEST_V_1_JSON = "application/checklist-item-request-v1+json";
-    private static final String APPLICATION_CHECKLIST_ITEM_V_1_JSON = "application/checklist-item-v1+json";
     private static final String ADMIN = "admin";
     private static final String TOKEN = "mockToken";
 
@@ -143,7 +140,7 @@ class ChecklistManagerControllerTest {
                         """.formatted(TITLE, ENVIRONMENT, TAG, VERSION, DESCRIPTION));
         var checklistError = ChecklistError.CHECKLIST_ALREADY_EXISTS;
         mockMvc.perform(request)
-                .andExpect(status().is(checklistError.getErrorCode()))
+                .andExpect(status().isConflict())
                 .andExpect(content().contentType(APPLICATION_ERROR_CHECKLIST_V_1_JSON))
                 .andExpect(jsonPath("$.title").value(checklistError.getErrorTitle()))
                 .andExpect(jsonPath("$.code").value(checklistError.getErrorCode()))
@@ -204,7 +201,7 @@ class ChecklistManagerControllerTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_CHECKLIST_V_1_JSON))
+                .andExpect(content().contentType(ChecklistManagerController.APPLICATION_CHECKLIST_V_1_JSON))
                 .andExpect(jsonPath("$.id").value(ID))
                 .andExpect(jsonPath("$.title").value(TITLE))
                 .andExpect(jsonPath("$.environment").value(ENVIRONMENT))
@@ -233,7 +230,7 @@ class ChecklistManagerControllerTest {
                 .get(String.format("/api/v1/checklist/%s", "1"))
                 .header("Authorization", "Bearer " + TOKEN);
         mockMvc.perform(request)
-                .andExpect(status().is(ChecklistError.BAD_REQUEST_ERROR.getErrorCode()))
+                .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_ERROR_CHECKLIST_V_1_JSON));
     }
 
@@ -252,14 +249,14 @@ class ChecklistManagerControllerTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_CHECKLIST_ITEM_V_1_JSON))
+                .andExpect(content().contentType(ChecklistManagerController.APPLICATION_CHECKLIST_ITEM_V_1_JSON))
                 .andExpect(jsonPath("$[0].id").value(ID))
                 .andExpect(jsonPath("$[0].description").value(DESCRIPTION))
                 .andExpect(jsonPath("$[0].status").value(Status.DONE.toString()));
     }
 
     @Test
-    void getChecklistItemsFails() throws Exception {
+    void getChecklistItemsNotFound() throws Exception {
         Mockito.when(checkListManagerService.getChecklistItems(UUID.fromString(ID)))
                 .thenThrow(new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND));
         final var request = MockMvcRequestBuilders
@@ -267,7 +264,7 @@ class ChecklistManagerControllerTest {
                 .header("Authorization", "Bearer " + TOKEN);
 
         mockMvc.perform(request)
-                .andExpect(status().is(401))
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_ERROR_CHECKLIST_V_1_JSON));
     }
 
@@ -282,8 +279,8 @@ class ChecklistManagerControllerTest {
                 .thenReturn(checkListItem);
         final var request = MockMvcRequestBuilders
                 .post(String.format("/api/v1/checklist/%s/items", ID))
-                .contentType(APPLICATION_CHECKLIST_ITEM_REQUEST_V_1_JSON)
-                .accept(APPLICATION_CHECKLIST_ITEM_V_1_JSON)
+                .contentType(ChecklistManagerController.APPLICATION_CHECKLIST_ITEM_REQUEST_V_1_JSON)
+                .accept(ChecklistManagerController.APPLICATION_CHECKLIST_ITEM_V_1_JSON)
                 .header("Authorization", "Bearer " + TOKEN)
                 .content("""
                         {
@@ -293,7 +290,7 @@ class ChecklistManagerControllerTest {
                         """.formatted(DESCRIPTION));
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_CHECKLIST_ITEM_V_1_JSON))
+                .andExpect(content().contentType(ChecklistManagerController.APPLICATION_CHECKLIST_ITEM_V_1_JSON))
                 .andExpect(jsonPath("$.id").value(ID))
                 .andExpect(jsonPath("$.description").value(DESCRIPTION))
                 .andExpect(jsonPath("$.status").value(Status.DONE.toString()));
@@ -305,8 +302,8 @@ class ChecklistManagerControllerTest {
                 .thenThrow(new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND));
         final var request = MockMvcRequestBuilders
                 .post(String.format("/api/v1/checklist/%s/items", ID))
-                .contentType(APPLICATION_CHECKLIST_ITEM_REQUEST_V_1_JSON)
-                .accept(APPLICATION_CHECKLIST_ITEM_V_1_JSON)
+                .contentType(ChecklistManagerController.APPLICATION_CHECKLIST_ITEM_REQUEST_V_1_JSON)
+                .accept(ChecklistManagerController.APPLICATION_CHECKLIST_ITEM_V_1_JSON)
                 .header("Authorization", "Bearer " + TOKEN)
                 .content("""
                         {
@@ -315,7 +312,7 @@ class ChecklistManagerControllerTest {
                         }
                         """.formatted(DESCRIPTION));
         mockMvc.perform(request)
-                .andExpect(status().is(401))
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_ERROR_CHECKLIST_V_1_JSON));
     }
 
@@ -360,7 +357,7 @@ class ChecklistManagerControllerTest {
                 .header("Authorization", "Bearer " + TOKEN);
 
         mockMvc.perform(request)
-                .andExpect(status().is(ChecklistError.CHECKLIST_NOT_FOUND.getErrorCode()))
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_ERROR_CHECKLIST_V_1_JSON));
     }
 }
