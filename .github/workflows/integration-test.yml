@@ -2,8 +2,9 @@ name: CI - Docker Compose Integration Test
 
 on:
   push:
-    branches: [main]
+    branches: [ "master" ]
   pull_request:
+    branches: [ "master" ]
 
 jobs:
   docker-compose-integration-test:

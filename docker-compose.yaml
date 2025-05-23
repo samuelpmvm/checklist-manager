@@ -18,10 +18,10 @@ services:
       DB_USER: checklist
       DB_PASSWORD: checklist
     depends_on:
-      - postgres
+      postgres:
+        - condition: service_healthy
     expose:
       - 8080
     ports:
       - "8080:8080"
-
 
