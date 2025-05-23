@@ -19,7 +19,7 @@ jobs:
 
       - name: Build and run with Docker Compose
         run: |
-          docker-compose -f docker-compose.yml up --build -d
+          docker compose up --build -d
 
       - name: Wait for the checklist service to be ready
         run: |

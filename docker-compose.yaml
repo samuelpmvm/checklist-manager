@@ -9,6 +9,11 @@ services:
       - "5432:5432"
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U checklist" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   checklist:
     image: checklist-app
     environment:
@@ -18,8 +23,7 @@ services:
       DB_USER: checklist
       DB_PASSWORD: checklist
     depends_on:
-      postgres:
-        - condition: service_healthy
+      - postgres
     expose:
       - 8080
     ports:
