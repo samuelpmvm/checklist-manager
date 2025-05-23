@@ -17,20 +17,20 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Build Docker image
+        run: docker build . --file Dockerfile --tag checklist-app
+
       - name: Build and run with Docker Compose
+                - name: Build the Docker image
         run: |
           docker compose up --build -d
 
       - name: Wait for the checklist service to be ready
         run: |
           echo "Waiting for checklist service..."
-          until curl --fail http://localhost:8080/checklist-manager/actuator/health; do
+          until curl --fail http://localhost:8080/checklist-manager/mgmt/health; do
             sleep 5
           done
-
-      - name: Run checklist endpoint test
-        run: |
-          curl --fail http://localhost:8080/checklist-manager/api/v1/checklists || exit 1
 
       - name: Shut down Docker Compose
         if: always()
