@@ -13,6 +13,7 @@ import com.example.model.checklist.ChecklistItemDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @Service
 public class ChecklistManagerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChecklistManagerService.class);
+    private static final String CHECKLIST_WITH_ID_WAS_NOT_FOUND = "Checklist with id {} was not found";
 
     private final ChecklistRepository checkListRepository;
     private final ChecklistItemRepository checkListItemRepository;
@@ -45,28 +47,39 @@ public class ChecklistManagerService {
         }
     }
 
-    public Checklist updateChecklist(UUID id) throws ChecklistException {
+    @Transactional
+    public ChecklistDto updateChecklist(UUID id) throws ChecklistException {
         var checkListOpt = checkListRepository.findById(id);
         if (checkListOpt.isPresent()) {
             var checklist = checkListOpt.get();
             LOGGER.info("Updating checklist with id: {}", id);
             checklist.setUpdatedAt(OffsetDateTime.now());
             checkListRepository.updateUpdatedAt(checklist.getUpdatedAt(), id);
-            return checklist;
+            return ChecklistMapper.toDto(checklist);
         } else {
-            LOGGER.error("Checklist with id {} was not found", id);
+            LOGGER.error(CHECKLIST_WITH_ID_WAS_NOT_FOUND, id);
             throw new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND);
         }
     }
 
-    public List<Checklist> getAllChecklist() {
+    @Transactional(readOnly = true)
+    public List<ChecklistDto> getAllChecklist() {
         LOGGER.info("Getting all Checklists");
-        return checkListRepository.findAll();
+        var checklists = checkListRepository.findAll();
+        return checklists.stream().map(ChecklistMapper::toDto).toList();
     }
 
-    public Optional<Checklist> getChecklistById(UUID id) {
+    @Transactional(readOnly = true)
+    public Optional<ChecklistDto> getChecklistById(UUID id) {
         LOGGER.info("Getting Checklist with id: {}", id);
-        return checkListRepository.findById(id);
+        var checkListOpt = checkListRepository.findById(id);
+        if (checkListOpt.isPresent()) {
+            LOGGER.info("Checklist with id {} was found", id);
+            return Optional.of(ChecklistMapper.toDto(checkListOpt.get()));
+        } else {
+            LOGGER.error(CHECKLIST_WITH_ID_WAS_NOT_FOUND, id);
+            return Optional.empty();
+        }
     }
 
     public void deleteChecklistById(UUID id) throws ChecklistException {
@@ -75,11 +88,12 @@ public class ChecklistManagerService {
             LOGGER.info("Deleting checklist with id: {}", id);
             checkListRepository.deleteById(id);
         } else {
-            LOGGER.error("Checklist with id {} was not found", id);
+            LOGGER.error(CHECKLIST_WITH_ID_WAS_NOT_FOUND, id);
             throw new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND);
         }
     }
 
+    @Transactional(readOnly = true)
     public List<ChecklistItem> getChecklistItems(UUID id) throws ChecklistException {
         LOGGER.info("Getting checklist items for checklist with id: {}", id);
         var checkListOpt = checkListRepository.findById(id);
@@ -90,12 +104,14 @@ public class ChecklistManagerService {
         }
     }
 
+    @Transactional
     public ChecklistItem createChecklistItem(UUID id, ChecklistItemDto checklistItemDto) throws ChecklistException {
         LOGGER.info("Creating checklist item for checklist with id: {}", id);
         var checkListOpt = checkListRepository.findById(id);
         if (checkListOpt.isPresent()) {
             var checklistItem = ChecklistItemMapper.toEntity(checkListOpt.get(), checklistItemDto);
             checklistItem.setChecklist(checkListOpt.get());
+            LOGGER.info("Saving checklist item: {}", checklistItem);
             return checkListItemRepository.save(checklistItem);
         } else {
             throw new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND);

@@ -3,6 +3,7 @@ package com.example.checklist.entities;
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,11 +21,11 @@ public class Checklist {
     private OffsetDateTime updatedAt;
 
     @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChecklistItem> items;
+    private List<ChecklistItem> items = new ArrayList<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     @CollectionTable(name = "checklist_tag", joinColumns = @JoinColumn(name = "checklist_id"))
-    private List<CheckListTag> tags;
+    private List<CheckListTag> tags = new ArrayList<>();
 
     public Checklist() {
         // Default constructor

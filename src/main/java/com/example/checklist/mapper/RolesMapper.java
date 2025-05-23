@@ -1,5 +1,6 @@
 package com.example.checklist.mapper;
 
+import com.example.checklist.entities.AppUser;
 import com.example.checklist.entities.UserRoles;
 import com.example.model.auth.RoleDto;
 
@@ -17,9 +18,13 @@ public final class RolesMapper {
                 .collect(Collectors.toSet());
     }
 
-    public static Set<UserRoles> toEntify(Set<RoleDto> roles) {
+    public static Set<UserRoles> toEntify(AppUser appUser, Set<RoleDto> roles) {
         return roles.stream()
-                .map(UserRoles::new)
+                .map(role -> {
+                    var userRole = new UserRoles(role);
+                    userRole.setAppUser(appUser);
+                    return userRole;
+                })
                 .collect(Collectors.toSet());
     }
 }

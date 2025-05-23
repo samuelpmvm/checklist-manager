@@ -115,7 +115,7 @@ class AuthControllerTest {
     void registerUserWithoutRoleAdminFails() throws Exception {
         var userRoles =  Set.of(new UserRoles(RoleDto.USER));
         var appUser = new AppUser(USER, PASSWORD, userRoles);
-        Mockito.when(appUserDetailsService.registerUser(USER, PASSWORD, userRoles)).thenReturn(appUser);
+        Mockito.when(appUserDetailsService.registerUser(USER, PASSWORD, Set.of(RoleDto.USER))).thenReturn(appUser);
         Mockito.when(jwtUtil.getUserNameFromToken(TOKEN)).thenReturn(ADMIN);
 
         var userDetails = User.withUsername(ADMIN).password(ADMIN).roles(RoleDto.USER.name()).build();

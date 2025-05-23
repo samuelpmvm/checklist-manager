@@ -5,3 +5,6 @@ databaseChangeLog:
   - include:
       file: create-users-table.yaml
       relativeToChangelogFile: true
+  - include:
+      file: create-admin-user.yaml
+      relativeToChangelogFile: true

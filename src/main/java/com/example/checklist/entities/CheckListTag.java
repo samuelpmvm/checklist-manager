@@ -1,5 +1,6 @@
 package com.example.checklist.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
@@ -7,7 +8,7 @@ import java.io.Serializable;
 @Embeddable
 public class CheckListTag implements Serializable {
 
-
+    @Column(name = "tag")
     private String tag;
 
     public CheckListTag() {

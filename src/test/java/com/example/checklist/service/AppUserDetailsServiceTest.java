@@ -41,7 +41,7 @@ class AppUserDetailsServiceTest {
     @Test
     void testLoadUserByUsernameSuccess() {
         var appUser = new AppUser(ADMIN, ADMIN, Set.of(new UserRoles(RoleDto.ADMIN)));
-        Mockito.when(userRepository.findByUsername(ADMIN)).thenReturn(Optional.of(appUser));
+        Mockito.when(userRepository.findById(ADMIN)).thenReturn(Optional.of(appUser));
         var userDetails = appUserDetailsService.loadUserByUsername(ADMIN);
 
         assertEquals(ADMIN, userDetails.getUsername());
@@ -54,14 +54,14 @@ class AppUserDetailsServiceTest {
 
     @Test
     void testLoadUserByUsernameFails() {
-        Mockito.when(userRepository.findByUsername(ADMIN)).thenReturn(Optional.empty());
+        Mockito.when(userRepository.findById(ADMIN)).thenReturn(Optional.empty());
         assertThrows(UsernameNotFoundException.class, () -> appUserDetailsService.loadUserByUsername(ADMIN));
     }
 
     @Test
     void testLoginUserSuccess() {
         var appUser = new AppUser(ADMIN, ADMIN, Set.of(new UserRoles(RoleDto.ADMIN)));
-        Mockito.when(userRepository.findByUsername(ADMIN)).thenReturn(Optional.of(appUser));
+        Mockito.when(userRepository.findById(ADMIN)).thenReturn(Optional.of(appUser));
         Mockito.when(passwordEncoder.matches(ADMIN, ADMIN)).thenReturn(true);
         Mockito.when(jwtUtil.generateToken(ADMIN, appUser.getRoles())).thenReturn(ADMIN);
 
@@ -72,7 +72,7 @@ class AppUserDetailsServiceTest {
 
     @Test
     void testLoginUserFailsUserNotFound() {
-        Mockito.when(userRepository.findByUsername(ADMIN)).thenReturn(Optional.empty());
+        Mockito.when(userRepository.findById(ADMIN)).thenReturn(Optional.empty());
         assertThrows(UsernameNotFoundException.class, () -> appUserDetailsService.loginUser(ADMIN, ADMIN));
     }
 
@@ -80,7 +80,7 @@ class AppUserDetailsServiceTest {
     void testLoginUserFailsBadCredentials() {
         var userRoles =  Set.of(new UserRoles(RoleDto.USER));
         var appUser = new AppUser(ADMIN, ADMIN, userRoles);
-        Mockito.when(userRepository.findByUsername(ADMIN)).thenReturn(Optional.of(appUser));
+        Mockito.when(userRepository.findById(ADMIN)).thenReturn(Optional.of(appUser));
         Mockito.when(passwordEncoder.matches(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(false);
         assertThrows(BadCredentialsException.class, () -> appUserDetailsService.loginUser(ADMIN, ADMIN));
     }
@@ -100,7 +100,7 @@ class AppUserDetailsServiceTest {
         Mockito.when(passwordEncoder.encode(ADMIN)).thenReturn(ADMIN);
 
 
-        var registeredUser = appUserDetailsService.registerUser(ADMIN, ADMIN,userRoles);
+        var registeredUser = appUserDetailsService.registerUser(ADMIN, ADMIN, Set.of(RoleDto.USER));
 
         assertEquals(appUser.getUsername(), registeredUser.getUsername());
         assertEquals(appUser.getPassword(), registeredUser.getPassword());

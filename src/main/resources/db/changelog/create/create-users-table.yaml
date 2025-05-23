@@ -12,15 +12,10 @@ databaseChangeLog:
             tableName: users
             columns:
               - column:
-                  name: id
-                  type: UUID
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
                   name: username
                   type: VARCHAR(50)
                   constraints:
+                    primaryKey: true
                     nullable: false
               - column:
                   name: password
@@ -61,8 +56,8 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: user_id
-                  type: UUID
+                  name: username
+                  type: VARCHAR(50)
                   constraints:
                     nullable: false
   - changeSet:
@@ -71,36 +66,16 @@ databaseChangeLog:
       changes:
         - addForeignKeyConstraint:
             baseTableName: user_roles
-            baseColumnNames: user_id
+            baseColumnNames: username
             referencedTableName: users
-            referencedColumnNames: id
+            referencedColumnNames: username
             constraintName: fk_user_roles_users
             onDelete: CASCADE
   - changeSet:
-      id: insert-admin-user
+      id: create_unique_constraint-user-roles-table
       author: SMarcos
       changes:
-        - insert:
-            tableName: users
-            columns:
-              - column:
-                  name: id
-                  value: '068ea258-9bb7-4420-b4ff-6c2a61b32549'
-              - column:
-                  name: username
-                  value: "admin"
-              - column:
-                  name: password
-                  value: "$2a$10$8osZb8NsL52RGwE8ujVhE.49v.2IGg8HAPflX2xYp9uJFZS8DOkEK"
-        - insert:
+        - addUniqueConstraint:
             tableName: user_roles
-            columns:
-              - column:
-                  name: id
-                  value: 'e3435d94-e4f1-4da6-8bf0-b303e9691066'
-              - column:
-                  name: role
-                  value: "ADMIN"
-              - column:
-                  name: user_id
-                  value: '068ea258-9bb7-4420-b4ff-6c2a61b32549'
+            columnNames: role, username
+            constraintName: uc_user_roles_role_username

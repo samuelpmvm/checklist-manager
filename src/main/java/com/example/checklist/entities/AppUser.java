@@ -2,23 +2,20 @@ package com.example.checklist.entities;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "users")
 public class AppUser {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id;
-
     private String username;
 
     private String password;
 
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserRoles> roles;
+    private Set<UserRoles> roles = new HashSet<>();
 
     public AppUser() {
         // Default constructor
@@ -30,12 +27,9 @@ public class AppUser {
         this.roles = roles;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
+    public AppUser(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     public String getUsername() {

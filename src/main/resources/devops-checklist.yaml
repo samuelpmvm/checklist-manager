@@ -279,9 +279,6 @@ components:
     ChecklistTagDto:
       type: object
       properties:
-        id:
-          type: string
-          description: Unique identifier for the checklist
         tag:
           type: string
           description: Tag of the checklist

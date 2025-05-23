@@ -6,6 +6,7 @@ import com.example.checklist.entities.ChecklistItem;
 import com.example.checklist.exception.ChecklistError;
 import com.example.checklist.exception.ChecklistException;
 import com.example.checklist.jwt.JwtUtil;
+import com.example.checklist.mapper.ChecklistMapper;
 import com.example.checklist.resources.Status;
 import com.example.checklist.service.AppUserDetailsService;
 import com.example.checklist.service.ChecklistManagerService;
@@ -151,7 +152,7 @@ class ChecklistManagerControllerTest {
     void updateChecklistSucceeded() throws Exception {
 
         Mockito.when(checkListManagerService.updateChecklist(UUID.fromString(ID)))
-                .thenReturn(createChecklist());
+                .thenReturn(ChecklistMapper.toDto(createChecklist()));
         final var request = MockMvcRequestBuilders
                 .put(String.format("/api/v1/checklist/%s", ID))
                 .contentType(ChecklistManagerController.APPLICATION_CHECKLIST_REQUEST_V_1_JSON)
@@ -173,7 +174,7 @@ class ChecklistManagerControllerTest {
     void getCheckListsSucceeded() throws Exception {
 
         Mockito.when(checkListManagerService.getAllChecklist())
-                .thenReturn(List.of(createChecklist()));
+                .thenReturn(List.of(ChecklistMapper.toDto(createChecklist())));
         final var request = MockMvcRequestBuilders
                 .get("/api/v1/checklist")
                 .contentType(ChecklistManagerController.APPLICATION_CHECKLIST_REQUEST_V_1_JSON)
@@ -194,7 +195,7 @@ class ChecklistManagerControllerTest {
     void getCheckListByIdSucceeded() throws Exception {
 
         Mockito.when(checkListManagerService.getChecklistById(UUID.fromString(ID)))
-                .thenReturn(Optional.of(createChecklist()));
+                .thenReturn(Optional.of(ChecklistMapper.toDto(createChecklist())));
         final var request = MockMvcRequestBuilders
                 .get(String.format("/api/v1/checklist/%s", ID))
                 .header("Authorization", "Bearer " + TOKEN);
@@ -338,7 +339,7 @@ class ChecklistManagerControllerTest {
     @Test
     void deleteCheckListByIdSucceeded() throws Exception {
         Mockito.when(checkListManagerService.getChecklistById(UUID.fromString(ID)))
-                .thenReturn(Optional.of(createChecklist()));
+                .thenReturn(Optional.of(ChecklistMapper.toDto(createChecklist())));
 
         final var request = MockMvcRequestBuilders.delete(String.format("/api/v1/checklist/%s", ID))
                 .header("Authorization", "Bearer " + TOKEN);

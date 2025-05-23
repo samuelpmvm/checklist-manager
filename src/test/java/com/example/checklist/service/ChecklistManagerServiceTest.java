@@ -101,9 +101,17 @@ class ChecklistManagerServiceTest {
         var checkList = ChecklistMapper.toEntity(createChecklistDto());
         Mockito.when(checklistRepository.findAll()).thenReturn(List.of(checkList));
 
-        var listOfCheckList = checklistManagerService.getAllChecklist();
+        var listOfCheckListDto = checklistManagerService.getAllChecklist();
         Mockito.verify(checklistRepository, Mockito.times(1)).findAll();
-        assertEquals(checkList, listOfCheckList.getFirst());
+        var checklistDto = listOfCheckListDto.getFirst();
+        assertEquals(checkList.getTitle(), checklistDto.getTitle());
+        assertEquals(checkList.getEnvironment(), checklistDto.getEnvironment());
+        assertEquals(checkList.getVersion(), checklistDto.getVersion());
+        assertEquals(checkList.getTags().getFirst().getTag(), checklistDto.getTags().getFirst().getTag());
+        assertEquals(checkList.getItems().getFirst().getDescription(), checklistDto.getItems().getFirst().getDescription());
+        assertEquals(checkList.getItems().getFirst().getStatus().name(), checklistDto.getItems().getFirst().getStatus().name());
+        assertEquals(checkList.getCreatedAt(), checklistDto.getCreatedAt());
+        assertEquals(checkList.getUpdatedAt(), checklistDto.getUpdatedAt());
     }
 
     @Test
@@ -111,9 +119,15 @@ class ChecklistManagerServiceTest {
         var checkList = ChecklistMapper.toEntity(createChecklistDto());
         Mockito.when(checklistRepository.findById(CHECKLIST_ID)).thenReturn(Optional.of(checkList));
 
-        var checklistOptional = checklistManagerService.getChecklistById(CHECKLIST_ID);
+        var checklistDtoOptional = checklistManagerService.getChecklistById(CHECKLIST_ID);
         Mockito.verify(checklistRepository, Mockito.times(1)).findById(CHECKLIST_ID);
-        assertEquals(checkList, checklistOptional.get());
+        var checklistDto = checklistDtoOptional.get();
+        assertEquals(checkList.getTitle(), checklistDto.getTitle());
+        assertEquals(checkList.getEnvironment(), checklistDto.getEnvironment());
+        assertEquals(checkList.getVersion(), checklistDto.getVersion());
+        assertEquals(checkList.getTags().getFirst().getTag(), checklistDto.getTags().getFirst().getTag());
+        assertEquals(checkList.getItems().getFirst().getDescription(), checklistDto.getItems().getFirst().getDescription());
+        assertEquals(checkList.getItems().getFirst().getStatus().name(), checklistDto.getItems().getFirst().getStatus().name());
     }
 
     @Test
