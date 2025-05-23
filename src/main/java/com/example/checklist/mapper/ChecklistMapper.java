@@ -2,6 +2,11 @@ package com.example.checklist.mapper;
 
 import com.example.checklist.entities.Checklist;
 import com.example.model.checklist.ChecklistDto;
+import com.example.model.checklist.ChecklistItemDto;
+import com.example.model.checklist.ChecklistTagDto;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public final class ChecklistMapper {
 
@@ -23,6 +28,7 @@ public final class ChecklistMapper {
         return checklistDto;
     }
 
+    @SuppressWarnings("java:S6204")
     public static Checklist toEntity(ChecklistDto checklistDto) {
         var checklist = new Checklist();
         checklist.setEnvironment(checklistDto.getEnvironment());
@@ -32,11 +38,30 @@ public final class ChecklistMapper {
                 .getItems()
                 .stream()
                 .map(checklistItemDto -> ChecklistItemMapper.toEntity(checklist, checklistItemDto))
-                .toList();
+                .collect(Collectors.toList());
         checklist.setItems(checkListItem);
-        var checkListTag = checklistDto.getTags().stream().map(CheckListTagMapper::toEntity).toList();
+        var checkListTag = checklistDto.getTags()
+                .stream()
+                .map(CheckListTagMapper::toEntity)
+                .collect(Collectors.toList());
         checklist.setTags(checkListTag);
 
         return checklist;
+    }
+
+    public static void updateChecklistItems(Checklist checklist, List<ChecklistItemDto> checklistItemsDto) {
+        checklist.getItems().clear();
+        for (ChecklistItemDto checklistItemDto : checklistItemsDto) {
+            var checklistItem = ChecklistItemMapper.toEntity(checklist, checklistItemDto);
+            checklist.getItems().add(checklistItem);
+        }
+    }
+
+    public static void updateChecklistTags(Checklist checklist, List<ChecklistTagDto> checklistTagsDto) {
+        checklist.getTags().clear();
+        for (ChecklistTagDto checklistTagDto : checklistTagsDto) {
+            var checklistTag = CheckListTagMapper.toEntity(checklistTagDto);
+            checklist.getTags().add(checklistTag);
+        }
     }
 }

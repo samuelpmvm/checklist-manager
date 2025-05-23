@@ -8,8 +8,9 @@ public enum ChecklistError {
     RESOURCE_NOT_FOUND("Resource not found", 1004, "Resource not found"),
     METHOD_ARG_NOT_VALID("Method Argument not valid", 1005, "Method argument is not valid"),
 
-    CHECKLIST_NOT_FOUND("Checklist not found", 2000, "Checklist with id {0}"),
+    CHECKLIST_NOT_FOUND("Checklist not found", 2000, "Checklist with id {0} not found"),
     CHECKLIST_ALREADY_EXISTS("Checklist already exists", 2001, "Checklist with title {0} and version {1} already exists"),
+    CHECKLIST_ITEM_NOT_FOUND("ChecklistItem not found", 2002, "ChecklistItem with id {0} not found"),
 
     GENERIC_ERROR("Generic error", 3000, "An unexpected error occurred. For more information please check the logs"),
     ;

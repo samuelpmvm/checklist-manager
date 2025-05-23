@@ -75,6 +75,12 @@ paths:
           description: ID of the checklist to update
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/checklist-request-v1+json:
+            schema:
+              $ref: '#/components/schemas/ChecklistDto'
       responses:
         '200':
           description: Checklist updated successfully
@@ -90,12 +96,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Checklist with Id not found
-          content:
-            application/error-checklist-v1+json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal error
           content:
             application/error-checklist-v1+json:
               schema:
@@ -229,10 +229,60 @@ paths:
             application/error-checklist-v1+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /checklist/{id}/items/{itemId}:
+    put:
+      tags:
+        - ChecklistManager
+      summary: Update checklistItem
+      operationId: updateChecklistItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the checklist that we want to create the new item
+          schema:
+            type: string
+        - name: itemId
+          in: path
+          required: true
+          description: ID of the checklist item that we want to update
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/checklist-item-request-v1+json:
+            schema:
+              $ref: '#/components/schemas/ChecklistItemDto'
+      responses:
+        '200':
+          description: ChecklistItem updated successfully
+          content:
+            application/checklist-item-v1+json:
+              schema:
+                $ref: '#/components/schemas/ChecklistItemDto'
+        '400':
+          description: Invalid UUID format
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Checklist or ChecklistItem not found
+          content:
+            application/error-checklist-v1+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     ChecklistDto:
       type: object
+      required:
+        - title
+        - environment
+        - version
+        - tags
+        - items
       properties:
         id:
             type: string
@@ -265,6 +315,9 @@ components:
             description: Last update date of the checklist
     ChecklistItemDto:
       type: object
+      required:
+        - description
+        - status
       properties:
         id:
           type: string
@@ -278,12 +331,18 @@ components:
           description: Status of the checklist item
     ChecklistTagDto:
       type: object
+      required:
+        - tag
       properties:
         tag:
           type: string
           description: Tag of the checklist
     ErrorResponse:
       type: object
+      required:
+        - title
+        - code
+        - message
       properties:
         title:
           type: string

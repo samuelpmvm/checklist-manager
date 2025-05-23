@@ -8,6 +8,7 @@ import com.example.checklist.mapper.ChecklistItemMapper;
 import com.example.checklist.mapper.ChecklistMapper;
 import com.example.checklist.repository.ChecklistItemRepository;
 import com.example.checklist.repository.ChecklistRepository;
+import com.example.checklist.resources.Status;
 import com.example.model.checklist.ChecklistDto;
 import com.example.model.checklist.ChecklistItemDto;
 import org.slf4j.Logger;
@@ -48,13 +49,13 @@ public class ChecklistManagerService {
     }
 
     @Transactional
-    public ChecklistDto updateChecklist(UUID id) throws ChecklistException {
+    public ChecklistDto updateChecklist(UUID id, ChecklistDto checklistDto) throws ChecklistException {
         var checkListOpt = checkListRepository.findById(id);
         if (checkListOpt.isPresent()) {
             var checklist = checkListOpt.get();
             LOGGER.info("Updating checklist with id: {}", id);
-            checklist.setUpdatedAt(OffsetDateTime.now());
-            checkListRepository.updateUpdatedAt(checklist.getUpdatedAt(), id);
+            updateChecklistAttributes(checklist, checklistDto);
+            checkListRepository.save(checklist);
             return ChecklistMapper.toDto(checklist);
         } else {
             LOGGER.error(CHECKLIST_WITH_ID_WAS_NOT_FOUND, id);
@@ -100,6 +101,7 @@ public class ChecklistManagerService {
         if (checkListOpt.isPresent()) {
             return checkListItemRepository.findChecklistItemsByChecklistId(id);
         } else {
+            LOGGER.error(CHECKLIST_WITH_ID_WAS_NOT_FOUND, id);
             throw new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND);
         }
     }
@@ -114,7 +116,39 @@ public class ChecklistManagerService {
             LOGGER.info("Saving checklist item: {}", checklistItem);
             return checkListItemRepository.save(checklistItem);
         } else {
+            LOGGER.error(CHECKLIST_WITH_ID_WAS_NOT_FOUND, id);
             throw new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND);
         }
+    }
+
+    @Transactional
+    public ChecklistItem updateChecklistItem(UUID id, UUID idItem, ChecklistItemDto checklistItemDto) throws ChecklistException {
+        LOGGER.info("Updating checklist item with id: {} for checklist with id: {}", idItem, id);
+        var checkListOpt = checkListRepository.findById(id);
+        if (checkListOpt.isPresent()) {
+            var checklistItemOpt = checkListItemRepository.findById(idItem);
+            if (checklistItemOpt.isPresent()) {
+                var checklistItem = checklistItemOpt.get();
+                checklistItem.setDescription(checklistItemDto.getDescription());
+                checklistItem.setStatus(Status.valueOf(checklistItemDto.getStatus().getValue()));
+                LOGGER.info("Updating checklist item: {}", checklistItem);
+                return checkListItemRepository.save(checklistItem);
+            } else {
+                LOGGER.error("ChecklistItem with id {} was not found", idItem);
+                throw new ChecklistException(ChecklistError.CHECKLIST_ITEM_NOT_FOUND);
+            }
+        } else {
+            LOGGER.error(CHECKLIST_WITH_ID_WAS_NOT_FOUND, id);
+            throw new ChecklistException(ChecklistError.CHECKLIST_NOT_FOUND);
+        }
+    }
+
+    private static void updateChecklistAttributes(Checklist checklist, ChecklistDto checklistDto) {
+        checklist.setTitle(checklistDto.getTitle());
+        checklist.setVersion(checklistDto.getVersion());
+        checklist.setEnvironment(checklistDto.getEnvironment());
+        checklist.setUpdatedAt(OffsetDateTime.now());
+        ChecklistMapper.updateChecklistItems(checklist, checklistDto.getItems());
+        ChecklistMapper.updateChecklistTags(checklist, checklistDto.getTags());
     }
 }
