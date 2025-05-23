@@ -1,0 +1,36 @@
+name: CI - Docker Compose Integration Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  docker-compose-integration-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and run with Docker Compose
+        run: |
+          docker-compose -f docker-compose.yml up --build -d
+
+      - name: Wait for the checklist service to be ready
+        run: |
+          echo "Waiting for checklist service..."
+          until curl --fail http://localhost:8080/checklist-manager/actuator/health; do
+            sleep 5
+          done
+
+      - name: Run checklist endpoint test
+        run: |
+          curl --fail http://localhost:8080/checklist-manager/api/v1/checklists || exit 1
+
+      - name: Shut down Docker Compose
+        if: always()
+        run: docker-compose down
