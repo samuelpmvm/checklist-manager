@@ -1,0 +1,49 @@
+checklistManager:
+  image: checklist-app
+  portName: http
+  port: 8080
+  protocol: TCP
+  replicaCount: 1
+  liveness:
+    endpoint: /checklist-manager/mgmt/health/liveness
+    initialDelaySeconds: 20
+    periodSeconds: 60
+    timeoutSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readiness:
+    endpoint: /checklist-manager/mgmt/health/readiness
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 1
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+  env:
+    - name: SCHEMA_DB
+      value: "checklist_schema"
+    - name: DB_HOST
+      value: "postgres"
+    - name: DB_NAME
+      value: "checklist_db"
+    - name: DB_USER
+      value: "checklist"
+    - name: DB_PASSWORD
+      value: "checklist"
+
+postgres:
+  name: "postgres"
+  enabled: true
+  image: postgres
+  tag: "15"
+  replicaCount: 1
+  db: checklist_db
+  user: checklist
+  password: checklist
+  port: 5432

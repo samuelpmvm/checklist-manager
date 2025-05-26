@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app.kubernetes.io/instance: {{ .Chart.Name }}
+
+spec:
+  replicas: {{ .Values.checklistManager.replicaCount }}
+  selector:
+    matchLabels:
+      app: checklist-app
+  template:
+    metadata:
+      labels:
+        app: checklist-app
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.checklistManager.image }}:{{ .Values.checklistManager.tag | default "latest" }}
+          ports:
+            - name: {{ .Values.checklistManager.portName | default "http" }}
+              containerPort: {{ .Values.checklistManager.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              port: {{ .Values.checklistManager.port }}
+              path: {{ .Values.checklistManager.liveness.endpoint }}
+            initialDelaySeconds: {{ .Values.checklistManager.liveness.initialDelaySeconds | default 20 }}
+            periodSeconds: {{ .Values.checklistManager.liveness.periodSeconds | default 60 }}
+            timeoutSeconds: {{ .Values.checklistManager.liveness.timeoutSeconds | default 10 }}
+            successThreshold: {{ .Values.checklistManager.liveness.successThreshold | default 1 }}
+            failureThreshold: {{ .Values.checklistManager.liveness.failureThreshold | default 3 }}
+          readinessProbe:
+            httpGet:
+              port: {{ .Values.checklistManager.port }}
+              path: {{ .Values.checklistManager.readiness.endpoint }}
+            initialDelaySeconds: {{ .Values.checklistManager.readiness.initialDelaySeconds | default 20 }}
+            periodSeconds: {{ .Values.checklistManager.readiness.periodSeconds | default 10 }}
+            timeoutSeconds: {{ .Values.checklistManager.readiness.timeoutSeconds | default 5 }}
+            successThreshold: {{ .Values.checklistManager.readiness.successThreshold | default 1 }}
+            failureThreshold: {{ .Values.checklistManager.readiness.failureThreshold | default 1 }}
+          resources:
+            {{ toYaml .Values.checklistManager.resources | nindent 12 }}
+      automountServiceAccountToken: false

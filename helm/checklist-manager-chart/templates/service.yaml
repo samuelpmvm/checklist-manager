@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: checklist-manager-service
+  labels:
+    app: checklist-app
+spec:
+  selector:
+    app: checklist-app
+  ports:
+    - port: {{ .Values.checklistManager.port }}
+      targetPort: {{ .Values.checklistManager.portName }}
+      protocol: {{ .Values.checklistManager.protocol | default "TCP" }}
+      name: {{ .Values.checklistManager.portName }}

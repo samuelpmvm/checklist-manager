@@ -1,0 +1,27 @@
+name: helm-test.yml
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  helm-chart-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Kind
+        uses: helm/kind-action@v1.7.0
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+
+      - name: Helm Lint
+        run: helm lint ./helm/devops-checklist-manager
+
+      - name: Helm Install
+        run: |
+          helm install checklist ./helm/devops-checklist-manager --wait
+          kubectl get pods
+          kubectl port-forward svc/checklist-service 8080:80 &
+          sleep 10
+          curl --fail http://localhost:8080/checklist-manager/actuator/health
