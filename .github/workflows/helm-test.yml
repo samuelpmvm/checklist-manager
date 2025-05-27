@@ -12,6 +12,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Install Kind
         uses: helm/kind-action@v1.7.0
 
@@ -23,12 +26,18 @@ jobs:
       - name: Lint Helm Chart
         run: helm lint ./chart/
 
-      - name: Verify Kubernetes Cluster
-        run: kubectl cluster-info
+      - name: Build Docker image
+        run: docker build . --file Dockerfile --tag checklist-app:$(date +%s)
+
+      - name: Load Docker image into Kind
+        run: |
+          kind load docker-image checklist-app:$(date +%s)
 
       - name: Helm Install
         run: |
-          helm install checklist ./chart/. --wait
+          helm install checklist ./chart/. \
+            --set checklistManager.tag=$(date +%s) \
+            --wait
           kubectl get pods
           kubectl port-forward svc/checklist-service 8080:80 &
           sleep 10

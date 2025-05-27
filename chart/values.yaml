@@ -1,5 +1,7 @@
 checklistManager:
   image: checklist-app
+  tag:
+  pullPolicy: IfNotPresent
   portName: http
   port: 8080
   protocol: TCP
@@ -31,6 +33,7 @@ postgres:
   enabled: true
   image: postgres
   tag: "15"
+  pullPolicy: IfNotPresent
   replicaCount: 1
   db:
     dbName: checklist_db

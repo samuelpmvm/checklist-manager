@@ -18,6 +18,7 @@ spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ .Values.checklistManager.image }}:{{ .Values.checklistManager.tag | default "latest" }}
+        imagePullPolicy: {{ .Values.postgres.pullPolicy }}
         ports:
         - name: {{ .Values.checklistManager.portName | default "http" }}
           containerPort: {{ .Values.checklistManager.port }}

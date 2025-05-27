@@ -18,6 +18,7 @@ spec:
       containers:
       - name: {{ .Values.postgres.name }}
         image: {{ .Values.postgres.image }}:{{ .Values.postgres.tag | default "latest" }}
+        imagePullPolicy: {{ .Values.postgres.pullPolicy }}
         ports:
         - containerPort: {{ .Values.postgres.port }}
         env:
