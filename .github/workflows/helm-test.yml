@@ -24,6 +24,9 @@ jobs:
       - name: Helm Install
         run: |
           helm install checklist ./chart/. --wait
+
+      - name: Check Checklist Service
+        run: |  
           kubectl get pods
           kubectl port-forward svc/checklist-service 8080:80 &
           sleep 10
