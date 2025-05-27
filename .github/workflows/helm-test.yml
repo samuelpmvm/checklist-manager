@@ -54,4 +54,4 @@ jobs:
           echo "=== Describe Checklist Pods ==="
           kubectl describe pods -l app=checklist-app -A || true
           echo ""=== Get Logs from Checklist Pod ===""
-          kubectl logs -l app=checklist-app || true
+          kubectl logs -l app=checklist-app --context kind-chart-testing || true

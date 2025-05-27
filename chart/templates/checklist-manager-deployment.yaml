@@ -16,6 +16,36 @@ spec:
       labels:
         app: checklist-app
     spec:
+      initContainers:
+        - name: init-schema
+          image: {{ .Values.postgres.image }}:{{ .Values.postgres.tag }}
+          command: [ 'sh', '-c', 'psql postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(DB_HOST):5432/$(DB_NAME) -c "CREATE SCHEMA IF NOT EXISTS checklist_schema AUTHORIZATION checklist;"' ]
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: checklist-manager-config
+                  key: DB_NAME
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: checklist-manager-config
+                  key: DB_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: checklist-manager-secret
+                  key: POSTGRES_PASSWORD
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: checklist-manager-config
+                  key: DB_HOST
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: checklist-manager-config
+                  key: DB_NAME
       containers:
       - name: {{ .Chart.Name }}
         image: {{ .Values.checklistManager.image }}:{{ .Values.checklistManager.tag | default "latest" }}
