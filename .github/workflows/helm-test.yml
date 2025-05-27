@@ -40,7 +40,7 @@ jobs:
             --set checklistManager.tag=$VERSION \
             --wait
           kubectl get pods --context kind-chart-testing
-          kubectl port-forward svc/checklist-service 8080:80  --context kind-chart-testing &
+          kubectl port-forward svc/checklist-manager-service 8080:80  --context kind-chart-testing &
           sleep 10
           curl --fail http://localhost:8080/checklist-manager/mgmt/health
 
