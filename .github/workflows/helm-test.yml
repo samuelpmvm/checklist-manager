@@ -44,16 +44,23 @@ jobs:
           sleep 10
           curl --fail http://localhost:8080/checklist-manager/mgmt/health
 
-      - name: Diagnose Failure (pods, events, describe)
+      - name: Diagnose (pods, events, describe)
         if: always()
         run: |
           echo "=== Pods ==="
-          kubectl get pods -A
+          kubectl get pods
+          
           echo "=== Events ==="
-          kubectl get events -A --sort-by=.metadata.creationTimestamp
+          kubectl get events --sort-by=.metadata.creationTimestamp
+          
           echo "=== Describe Checklist Pods ==="
           kubectl describe pods -l app=checklist-app -A || true
+          
+          echo ""=== Get Logs from ChecklistInit Container ===""
+          kubectl logs -l app=checklist-app -c init-schema --context kind-chart-testing || true
+          
           echo ""=== Get Logs from Checklist Pod ===""
           kubectl logs -l app=checklist-app --context kind-chart-testing || true
-          kubectl logs -l app=checklist-app -c init-schema --context kind-chart-testing || true
+          
+          echo ""=== Get Logs from Postgres Pod ===""
           kubectl logs -l app=postgres --context kind-chart-testing || true
