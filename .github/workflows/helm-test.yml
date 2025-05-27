@@ -29,10 +29,6 @@ jobs:
       - name: Build Docker image
         run: docker build --file Dockerfile --tag checklist-app:$VERSION .
 
-      - name: Load Docker image into Kind
-        run: |
-          kind load docker-image checklist-app:$VERSION
-
       - name: Helm Install
         run: |
           helm install checklist ./chart/. \
