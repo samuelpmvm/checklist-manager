@@ -25,17 +25,6 @@ checklistManager:
     requests:
       cpu: "250m"
       memory: "256Mi"
-  env:
-    - name: SCHEMA_DB
-      value: "checklist_schema"
-    - name: DB_HOST
-      value: "postgres"
-    - name: DB_NAME
-      value: "checklist_db"
-    - name: DB_USER
-      value: "checklist"
-    - name: DB_PASSWORD
-      value: "checklist"
 
 postgres:
   name: "postgres"
@@ -43,7 +32,21 @@ postgres:
   image: postgres
   tag: "15"
   replicaCount: 1
-  db: checklist_db
-  user: checklist
-  password: checklist
+  db:
+    dbName: checklist_db
+    schema: "checklist_schema"
+    host: "postgres"
+    user: checklist
   port: 5432
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+
+secrets:
+  secretKey: jdxZxb9Wkt/x5Bw9726ecQ81Bibb.cxdiV1reCgrzFadnA8g5DOLTwEnOEXnhBD1u
+  secretExpiration: 3600
+  dbPassword: checklist

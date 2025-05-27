@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: checklist-manager-config
+data:
+  DB_SCHEMA: {{ .Values.postgres.db.schema | quote }}
+  DB_HOST: {{ .Values.postgres.db.host | quote }}
+  DB_NAME: {{ .Values.postgres.db.dbName | quote }}
+  DB_USER: {{ .Values.postgres.db.user | quote }}
