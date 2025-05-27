@@ -8,9 +8,10 @@ on:
 jobs:
   helm-chart-test:
     runs-on: ubuntu-latest
-    env:
-      VERSION: $(date +%s)
     steps:
+      - name: Set VERSION variable
+        run: echo "VERSION=$(date +%s)" >> $GITHUB_ENV
+
       - name: Checkout code
         uses: actions/checkout@v4
 
