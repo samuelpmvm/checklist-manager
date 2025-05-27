@@ -16,11 +16,11 @@ jobs:
         uses: azure/setup-helm@v3
 
       - name: Helm Lint
-        run: helm lint ./helm/devops-checklist-manager
+        run: helm lint ./devops-checklist-manager/chart/
 
       - name: Helm Install
         run: |
-          helm install checklist ./helm/devops-checklist-manager --wait
+          helm install checklist ./devops-checklist-manager/chart/. --wait
           kubectl get pods
           kubectl port-forward svc/checklist-service 8080:80 &
           sleep 10
