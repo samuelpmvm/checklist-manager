@@ -37,8 +37,8 @@ postgres:
   replicaCount: 1
   db:
     dbName: checklist_db
-    schema: "checklist_schema"
-    host: "postgres"
+    schema: checklist_schema
+    host: postgres-service
     user: checklist
   port: 5432
   portName: http
