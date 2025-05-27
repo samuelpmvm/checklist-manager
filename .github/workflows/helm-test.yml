@@ -42,7 +42,7 @@ jobs:
           kubectl get pods --context kind-chart-testing
           kubectl port-forward svc/checklist-service 8080:80  --context kind-chart-testing &
           sleep 10
-          curl --fail http://localhost:8080/checklist-manager/actuator/health
+          curl --fail http://localhost:8080/checklist-manager/mgmt/health
 
       - name: Diagnose Failure (pods, events, describe)
         if: always()
@@ -52,4 +52,6 @@ jobs:
           echo "=== Events ==="
           kubectl get events -A --sort-by=.metadata.creationTimestamp
           echo "=== Describe Checklist Pods ==="
-          kubectl describe pods -l app.kubernetes.io/name=checklist-app -A || true
+          kubectl describe pods -l app=checklist-app -A || true
+          echo ""=== Get Logs from Checklist Pod ===""
+          kubectl logs -l app=checklist-app || true
