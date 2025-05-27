@@ -1,4 +1,4 @@
-name: helm-test.yml
+name: CI - Helm Chart Integration Test
 on:
   push:
     branches: [ "master" ]
@@ -15,8 +15,11 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v3
 
-      - name: Helm Lint
-        run: helm lint ./devops-checklist-manager/chart/
+      - name: List project files
+        run: ls -R
+
+      - name: Lint Helm Chart
+        run: helm lint ./chart/
 
       - name: Helm Install
         run: |
