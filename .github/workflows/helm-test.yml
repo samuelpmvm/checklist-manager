@@ -17,17 +17,29 @@ jobs:
 
       - name: Install Helm
         uses: azure/setup-helm@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lint Helm Chart
         run: helm lint ./chart/
 
+      - name: Verify Kubernetes Cluster
+        run: kubectl cluster-info
+
       - name: Helm Install
         run: |
           helm install checklist ./chart/. --wait
-
-      - name: Check Checklist Service
-        run: |  
           kubectl get pods
           kubectl port-forward svc/checklist-service 8080:80 &
           sleep 10
           curl --fail http://localhost:8080/checklist-manager/actuator/health
+
+      - name: Diagnose Failure (pods, events, describe)
+        if: always()
+        run: |
+          echo "=== Pods ==="
+          kubectl get pods -A
+          echo "=== Events ==="
+          kubectl get events -A --sort-by=.metadata.creationTimestamp
+          echo "=== Describe Checklist Pods ==="
+          kubectl describe pods -l app.kubernetes.io/name=checklist-app -A || true
