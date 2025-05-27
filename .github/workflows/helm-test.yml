@@ -9,6 +9,9 @@ jobs:
   helm-chart-test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Install Kind
         uses: helm/kind-action@v1.7.0
 
