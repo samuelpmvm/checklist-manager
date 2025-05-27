@@ -29,13 +29,18 @@ jobs:
       - name: Build Docker image
         run: docker build --file Dockerfile --tag checklist-app:$VERSION .
 
+      - name: Load Docker image into Kind
+        run: |
+          kind load docker-image checklist-app:$VERSION --name chart-testing
+
       - name: Helm Install
         run: |
           helm install checklist ./chart/. \
+            --kube-context kind-chart-testing \
             --set checklistManager.tag=$VERSION \
             --wait
-          kubectl get pods
-          kubectl port-forward svc/checklist-service 8080:80 &
+          kubectl get pods --context kind-chart-testing
+          kubectl port-forward svc/checklist-service 8080:80  --context kind-chart-testing &
           sleep 10
           curl --fail http://localhost:8080/checklist-manager/actuator/health
 

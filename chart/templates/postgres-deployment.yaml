@@ -4,6 +4,7 @@ metadata:
   name: {{ .Values.postgres.name }}
   labels:
     app.kubernetes.io/instance: {{ .Values.postgres.name }}
+    app.kubernetes.io/name: postgres
 
 spec:
   replicas: {{ .Values.postgres.replicaCount }}

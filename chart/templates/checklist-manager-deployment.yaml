@@ -4,6 +4,7 @@ metadata:
   name: {{ .Chart.Name }}
   labels:
     app.kubernetes.io/instance: {{ .Chart.Name }}
+    app.kubernetes.io/name: checklist-app
 
 spec:
   replicas: {{ .Values.checklistManager.replicaCount }}
