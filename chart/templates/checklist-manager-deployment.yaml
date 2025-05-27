@@ -19,7 +19,7 @@ spec:
       initContainers:
         - name: init-schema
           image: {{ .Values.postgres.image }}:{{ .Values.postgres.tag }}
-          command: [ 'sh', '-c', 'psql postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(DB_HOST):5432/$(DB_NAME) -c "CREATE SCHEMA IF NOT EXISTS checklist_schema AUTHORIZATION checklist;"' ]
+          command: [ 'sh', '-c', 'psql -h postgres-service postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(DB_HOST):5432/$(DB_NAME) -c "CREATE SCHEMA IF NOT EXISTS checklist_schema AUTHORIZATION checklist;"' ]
           env:
             - name: POSTGRES_DB
               valueFrom:

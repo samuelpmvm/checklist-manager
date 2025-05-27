@@ -41,6 +41,8 @@ postgres:
     host: "postgres"
     user: checklist
   port: 5432
+  portName: http
+  protocol: TCP
   resources:
     limits:
       cpu: "500m"

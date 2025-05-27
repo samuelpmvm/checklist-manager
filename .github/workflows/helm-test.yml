@@ -55,3 +55,5 @@ jobs:
           kubectl describe pods -l app=checklist-app -A || true
           echo ""=== Get Logs from Checklist Pod ===""
           kubectl logs -l app=checklist-app --context kind-chart-testing || true
+          kubectl logs -l app=checklist-app -c init-schema --context kind-chart-testing || true
+          kubectl logs -l app=postgres --context kind-chart-testing || true

@@ -9,6 +9,6 @@ spec:
     app: checklist-app
   ports:
     - port: {{ .Values.checklistManager.port }}
-      targetPort: {{ .Values.checklistManager.portName }}
+      targetPort: {{ .Values.checklistManager.port }}
       protocol: {{ .Values.checklistManager.protocol | default "TCP" }}
       name: {{ .Values.checklistManager.portName }}
