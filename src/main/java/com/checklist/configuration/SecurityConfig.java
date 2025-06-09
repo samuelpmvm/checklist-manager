@@ -47,7 +47,7 @@ public class SecurityConfig {
                                         "/",
                                         "/mgmt/**",
                                         "/auth/login",
-                                        "api/v1/docs")
+                                        "/api/v1/docs")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())
