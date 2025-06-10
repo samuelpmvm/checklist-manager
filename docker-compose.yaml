@@ -10,7 +10,7 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U checklist" ]
+      test: [ "CMD-SHELL", "pg_isready -U checklist -d checklist_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -25,7 +25,8 @@ services:
       DB_USER: checklist
       DB_PASSWORD: checklist
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     expose:
       - 8080
     ports:

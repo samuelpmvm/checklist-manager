@@ -1,19 +1,19 @@
 # Checklist Manager ✅
 
-A RESTful API to manage checklists — built with Spring Boot, secured with JWT, containerized with Docker, deployed via Helm, and integrated into CI/CD with GitHub Actions.
+A Spring Boot RESTful API to manage checklists —  supporting item-level operations, JWT-based authentication, PostgreSQL with Liquibase, observability with Prometheus, and Kubernetes deployment via Helm. and integrated into CI/CD with GitHub Actions.
 
 ---
 
 ## 🔧 Features
 
-- RESTful CRUD API for managing checklists
-- JWT-based authentication
-- Prometheus metrics exposed via Spring Boot Actuator
-- PostgreSQL database with Liquibase migration
-- Docker and Docker Compose support
-- Helm chart for Kubernetes deployment
-- CI/CD with GitHub Actions
-- ConfigMaps and Secrets for configuration management
+- ✅ Create, retrieve, update, and delete checklists
+- 📌 Manage checklist items (mark as DONE, BLOCKED, etc.)
+- 🔐 JWT authentication with login and role-based access
+- 🐘 PostgreSQL + Liquibase schema management
+- 🐳 Docker and Docker Compose support
+- ☸️ Kubernetes + Helm Chart for deployment
+- 📊 Metrics available via Spring Actuator for Prometheus
+- 🧪 Integrated GitHub Actions CI/CD pipeline
 
 ---
 
@@ -32,8 +32,14 @@ docker compose up -d --build
 # Access the app at http://localhost:8080/checklist-manager/
 ```
 
-🔐 Authentication
-All endpoints are protected and require a JWT token.
+## 📚 Documentation
 
-🔑 Login
-POST /checklist-manager/auth/login
+- [Authentication Guide](docs/authentication.md)
+- [API Reference](docs/api.md)
+- [Unit and Integration Tests](docs/tests.md)
+- [Docker Usage](docs/docker.md)
+- [Deployment with Helm](docs/deployment.md)
+- [Metrics and Observability](docs/metrics.md)
+- [Configuration](docs/configuration.md)
+- [GitHub Actions CI/CD](docs/github_actions.md)
+- [Licence](docs/license.md)

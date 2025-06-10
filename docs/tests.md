@@ -1,0 +1,4 @@
+🧪 Running Tests
+```
+./mvnw test
+```
