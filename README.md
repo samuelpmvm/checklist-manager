@@ -1,4 +1,9 @@
 # Checklist Manager ✅
+[![Last Commit](https://img.shields.io/github/last-commit/samuelpmvm/checklist-manager)](https://github.com/samuelpmvm/checklist-manager)
+
+[Build Status](https://github.com/samuelpmvm/checklist-manager/actions)
+
+[![License](https://img.shields.io/github/license/samuelpmvm/checklist-manager)](LICENSE)
 
 A Spring Boot RESTful API to manage checklists —  supporting item-level operations, JWT-based authentication, PostgreSQL with Liquibase, observability with Prometheus, and Kubernetes deployment via Helm. and integrated into CI/CD with GitHub Actions.
 
