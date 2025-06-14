@@ -280,7 +280,6 @@ components:
       required:
         - title
         - environment
-        - version
         - tags
         - items
       properties:
@@ -294,7 +293,7 @@ components:
             type: string
             description: Environment of the checklist
         version:
-            type: string
+            type: integer
             description: Version of the checklist
         tags:
             type: array

@@ -12,6 +12,6 @@ import java.util.UUID;
 @Repository
 public interface ChecklistRepository extends JpaRepository<Checklist, UUID> {
 
-    @Query("SELECT c FROM Checklist c WHERE c.title = :title AND c.version = :version")
-    Optional<Checklist> findByTitleAndVersion(@Param("title") String title, @Param("version") String version);
+    @Query("SELECT MAX(c.version) FROM Checklist c WHERE c.title = :title")
+    Optional<Integer> findMaxVersionByTitle(@Param("title") String title);
 }

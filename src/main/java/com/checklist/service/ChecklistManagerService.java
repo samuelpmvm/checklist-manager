@@ -34,18 +34,20 @@ public class ChecklistManagerService {
         this.checkListItemRepository = checkListItemRepository;
     }
 
-    public Checklist createChecklist(ChecklistDto checklistDto) throws ChecklistException {
-        LOGGER.info("Creating checklist with title {} and version {}", checklistDto.getTitle(), checklistDto.getVersion());
+    public Checklist createChecklist(ChecklistDto checklistDto) {
         var checkList = ChecklistMapper.toEntity(checklistDto);
-        if (checkListRepository.findByTitleAndVersion(checklistDto.getTitle(), checklistDto.getVersion()).isEmpty()) {
-            LOGGER.info("Checklist with title {} and version {} does not exist, creating a new one", checklistDto.getTitle(), checklistDto.getVersion());
-            var date = OffsetDateTime.now();
-            checkList.setCreatedAt(date);
-            checkList.setUpdatedAt(date);
-            return checkListRepository.save(checkList);
-        } else {
-            throw new ChecklistException(ChecklistError.CHECKLIST_ALREADY_EXISTS);
-        }
+        var maxChecklistVersionOpt = checkListRepository.findMaxVersionByTitle(checkList.getTitle());
+        maxChecklistVersionOpt.ifPresentOrElse(version -> {
+            checkList.setVersion(version + 1);
+            LOGGER.info("Creating checklist with title '{}' and version '{}'", checkList.getTitle(), checkList.getVersion());
+        }, () -> {
+            checkList.setVersion(1);
+            LOGGER.info("Checklist with title '{}' does not exist, creating a new one", checkList.getTitle());
+        });
+        var date = OffsetDateTime.now();
+        checkList.setCreatedAt(date);
+        checkList.setUpdatedAt(date);
+        return checkListRepository.save(checkList);
     }
 
     @Transactional
@@ -145,7 +147,6 @@ public class ChecklistManagerService {
 
     private static void updateChecklistAttributes(Checklist checklist, ChecklistDto checklistDto) {
         checklist.setTitle(checklistDto.getTitle());
-        checklist.setVersion(checklistDto.getVersion());
         checklist.setEnvironment(checklistDto.getEnvironment());
         checklist.setUpdatedAt(OffsetDateTime.now());
         ChecklistMapper.updateChecklistItems(checklist, checklistDto.getItems());

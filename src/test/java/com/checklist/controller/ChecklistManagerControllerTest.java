@@ -40,7 +40,7 @@ class ChecklistManagerControllerTest {
     private static final String TITLE = "title";
     private static final String ENVIRONMENT = "test";
     private static final String TAG = "tag1";
-    private static final String VERSION = "1.0.0";
+    private static final int VERSION = 1;
     private static final String DESCRIPTION = "description";
     private static final String ID = "0d75f424-0ee4-48f8-83cd-c2067ab0c9bb";
     private static final String CHECKLIST_ITEM_ID = "0d75f424-0ee4-48f8-83cd-c2067ab0c9bb";
@@ -111,44 +111,6 @@ class ChecklistManagerControllerTest {
                 .andExpect(jsonPath("$.version").value(VERSION))
                 .andExpect(jsonPath("$.items[0].description").value(DESCRIPTION))
                 .andExpect(jsonPath("$.items[0].status").value(Status.DONE.toString()));
-    }
-
-    @Test
-    void createChecklistAlreadyExistsFails() throws Exception {
-
-        Mockito.doThrow(new ChecklistException(ChecklistError.CHECKLIST_ALREADY_EXISTS))
-                .when(checkListManagerService)
-                .createChecklist(ArgumentMatchers.any(ChecklistDto.class));
-        final var request = MockMvcRequestBuilders
-                .post("/api/v1/checklist")
-                .header("Authorization", "Bearer " + TOKEN)
-                .contentType(ChecklistManagerController.APPLICATION_CHECKLIST_REQUEST_V_1_JSON)
-                .accept(ChecklistManagerController.APPLICATION_CHECKLIST_V_1_JSON)
-                .content("""
-                        {
-                          "title": "%s",
-                          "environment": "%s",
-                          "tags": [
-                            {
-                              "tag": "%s"
-                            }
-                          ],
-                          "version": "%s",
-                          "items": [
-                            {
-                              "description": "%s",
-                              "status": "DONE"
-                            }
-                          ]
-                        }
-                        """.formatted(TITLE, ENVIRONMENT, TAG, VERSION, DESCRIPTION));
-        var checklistError = ChecklistError.CHECKLIST_ALREADY_EXISTS;
-        mockMvc.perform(request)
-                .andExpect(status().isConflict())
-                .andExpect(content().contentType(APPLICATION_ERROR_CHECKLIST_V_1_JSON))
-                .andExpect(jsonPath("$.title").value(checklistError.getErrorTitle()))
-                .andExpect(jsonPath("$.code").value(checklistError.getErrorCode()))
-                .andExpect(jsonPath("$.message").value(checklistError.getErrorMessage()));
     }
 
     @Test

@@ -15,7 +15,7 @@ public class Checklist {
     private UUID id;
 
     private String title;
-    private String version;
+    private Integer version;
     private String environment;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
@@ -55,11 +55,11 @@ public class Checklist {
         this.environment = environment;
     }
 
-    public String getVersion() {
+    public Integer getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(Integer version) {
         this.version = version;
     }
 
